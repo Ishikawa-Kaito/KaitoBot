@@ -20,7 +20,7 @@ fun File.writeClassToJson(context: Any, mapper: ObjectMapper = KaitoMind.mapper)
     FileWriter.create(this).write(mapper.writeValueAsString(context), false)
 }
 
-inline fun <reified T> File.loadClassFromJson(mapper: ObjectMapper = KaitoMind.mapper):T {
+inline fun <reified T> File.loadClassFromJson(mapper: ObjectMapper = KaitoMind.mapper): T {
     require(exists())
     return mapper.readValue(getContext())
 }
@@ -43,7 +43,7 @@ fun File.copyAndRename(name: String) {
     Files.copy(toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING)
 }
 
-object FileUtil{
+object FileUtil {
     fun getJarLocation(): File {
         var path: String = cn.zeshawn.kaitobot.KaitoApp::class.java.protectionDomain.codeSource.location.path
         if (System.getProperty("os.name").lowercase().contains("dows")) {

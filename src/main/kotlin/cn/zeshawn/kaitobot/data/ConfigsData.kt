@@ -3,7 +3,6 @@ package cn.zeshawn.kaitobot.data
 import cn.zeshawn.kaitobot.KaitoMind
 import cn.zeshawn.kaitobot.data.base.DataFileBase
 import cn.zeshawn.kaitobot.entity.Config
-import cn.zeshawn.kaitobot.util.getContext
 import cn.zeshawn.kaitobot.util.loadClassFromJson
 import cn.zeshawn.kaitobot.util.writeClassToJson
 import java.io.File

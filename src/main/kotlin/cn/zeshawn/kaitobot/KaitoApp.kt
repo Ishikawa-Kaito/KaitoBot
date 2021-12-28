@@ -14,26 +14,26 @@ object KaitoApp {
     fun main(args: Array<String>) {
         try {
             KaitoLauncher.launch()
-        }catch (e:Exception){
+        } catch (e: Exception) {
             KaitoMind.KaitoLogger.error {
                 "KaitoBot启动错误."
             }
             KaitoMind.KaitoLogger.error {
-                LogUtil.formatStacktrace(e,null,true)
+                LogUtil.formatStacktrace(e, null, true)
             }
         }
 
-        try{
+        try {
             runBlocking {
                 kaito.login()
             }
             runBlocking {
                 kaito.join()
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             KaitoMind.KaitoLogger.error {
-                "出现异常，无法正常运行。\n"+
-                LogUtil.formatStacktrace(e,null,true)
+                "出现异常，无法正常运行。\n" +
+                        LogUtil.formatStacktrace(e, null, true)
             }
             exitProcess(-1)
         }

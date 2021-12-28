@@ -18,6 +18,10 @@
 /build/
 gradle
 
+### Mirai ###
+cache
+device.json
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

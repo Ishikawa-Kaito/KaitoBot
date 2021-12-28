@@ -5,23 +5,23 @@ import cn.zeshawn.kaitobot.util.createBackupFile
 import cn.zeshawn.kaitobot.util.getContext
 import java.io.File
 
-abstract class DataFileBase(val file:File) {
+abstract class DataFileBase(val file: File) {
     abstract fun load()// 读取
     abstract fun save()// 保存
     abstract fun init()// 初始化
-    fun exists():Boolean = file.exists()
+    fun exists(): Boolean = file.exists()
 
 
-    open fun check(){
-        if (!exists() || (file.isFile && file.getContext().isEmpty())){
-            KaitoMind.KaitoLogger.info("初始化数据 ${this.javaClass.simpleName}(${file.name})")
+    open fun check() {
+        if (!exists() || (file.isFile && file.getContext().isEmpty())) {
+            KaitoMind.KaitoLogger.info("[Data] 初始化数据 ${this.javaClass.simpleName}(${file.name})")
             init()
         }
         load()
-        KaitoMind.KaitoLogger.info("正在加载数据 ${this.javaClass.simpleName}(${file.name})")
+        KaitoMind.KaitoLogger.info("[Data] 正在加载数据 ${this.javaClass.simpleName}(${file.name})")
     }
 
-    fun createBackup(){
+    fun createBackup() {
         file.createBackupFile()
     }
 

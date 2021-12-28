@@ -20,7 +20,8 @@ dependencies {
     runtimeOnly("net.mamoe", "mirai-core", miraiVersion) // 运行时使用
 
     implementation ("io.github.microutils:kotlin-logging-jvm:2.1.21")
-    implementation("org.slf4j:slf4j-simple:1.7.32")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+
     implementation("org.reflections:reflections:0.10.2")
 
 
@@ -57,5 +58,5 @@ tasks.withType<KotlinCompile> {
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("cn.zeshawn.kaitobot.KaitoApp")
 }

@@ -7,13 +7,13 @@ import org.reflections.util.ConfigurationBuilder
 
 object CommandManager {
 
-    private val commands:MutableSet<ChatCommand> = mutableSetOf()
+    private val commands: MutableSet<ChatCommand> = mutableSetOf()
 
     // 注册一条命令
-    fun registerCommand(cmd:ChatCommand){
+    fun registerCommand(cmd: ChatCommand) {
         if (!commands.add(cmd)) {
             KaitoMind.KaitoLogger.warn("[Command] 正在尝试注册已有命令 ${cmd.name}")
-        }else{
+        } else {
             KaitoMind.KaitoLogger.info("[Command] 注册命令 ${cmd.name}")
         }
     }
@@ -25,7 +25,7 @@ object CommandManager {
         }
     }
 
-    fun autoSetup(packageName:String){
+    fun autoSetup(packageName: String) {
         KaitoMind.KaitoLogger.info("[Command] 开始自动注册命令，命令包名${packageName}")
         val reflection = Reflections(ConfigurationBuilder().forPackage(packageName))
         val jList = reflection.getSubTypesOf(ChatCommand::class.java)
@@ -34,11 +34,11 @@ object CommandManager {
         this.registerCommands(oList)
     }
 
-    fun getCommand(prefix:String):ChatCommand?{
+    fun getCommand(cmdName: String): ChatCommand? {
         val command = commands.parallelStream().filter {
-            canYouCallMeByThis(it,prefix)
+            canYouCallMeByThis(it, cmdName)
         }.findFirst()
-        return if(command.isPresent) command.get() else null
+        return if (command.isPresent) command.get() else null
     }
 
     fun getCommandName(message: String): String {
@@ -47,7 +47,7 @@ object CommandManager {
         return message.substring(index, message.length).split(" ")[0]
     }
 
-    private fun getCommandPrefix(message: String): String {
+    fun getCommandPrefix(message: String): String {
         if (message.isNotEmpty()) {
             KaitoMind.config.commandPrefix.forEach {
                 if (message.startsWith(it)) {
@@ -59,18 +59,14 @@ object CommandManager {
     }
 
 
-
-
-    private fun canYouCallMeByThis(cmd:ChatCommand, tryWord:String):Boolean{
-        when{
-            tryWord == cmd.name -> return true
-            cmd.alias.isNotEmpty()->{
-                cmd.alias.parallelStream().filter {
+    private fun canYouCallMeByThis(cmd: ChatCommand, tryWord: String): Boolean {
+        return when {
+            tryWord == cmd.name -> true
+            cmd.alias.isNotEmpty() -> cmd.alias.parallelStream()
+                .filter {
                     it!!.contentEquals(tryWord)
                 }.findFirst().isPresent
-            }
-            else -> return false
+            else -> false
         }
-        return false
     }
 }

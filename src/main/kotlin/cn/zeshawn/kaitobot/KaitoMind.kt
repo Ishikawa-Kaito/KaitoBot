@@ -4,10 +4,9 @@ import cn.zeshawn.kaitobot.core.Kaito
 import cn.zeshawn.kaitobot.entity.Config
 import cn.zeshawn.kaitobot.entity.User
 import cn.zeshawn.kaitobot.util.FileUtil
-import cn.zeshawn.kaitobot.util.FileUtil.getJarLocation
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer
@@ -30,16 +29,23 @@ object KaitoMind {
 
     //机器人实例
     val kaito: Kaito = Kaito()
+
     //配置设置
     internal lateinit var config: Config
+
     //根目录
     internal val root: File by lazy {
         FileUtil.getJarLocation()
     }
+
     //日志
     val KaitoLogger = KotlinLogging.logger("KaitoApp")
+
     //全部用户
     internal var users: MutableMap<Long, User> = ConcurrentHashMap()
+
+    internal val music163Comments = mutableListOf<String>()
+
 
     //Jackson mapper
     val mapper: ObjectMapper = ObjectMapper()
