@@ -1,0 +1,72 @@
+package cn.zeshawn.kaitobot
+
+import cn.zeshawn.kaitobot.core.Kaito
+import cn.zeshawn.kaitobot.entity.Config
+import cn.zeshawn.kaitobot.entity.User
+import cn.zeshawn.kaitobot.util.FileUtil
+import cn.zeshawn.kaitobot.util.FileUtil.getJarLocation
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import mu.KotlinLogging
+import java.io.File
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.concurrent.ConcurrentHashMap
+
+// 存点全局变量
+object KaitoMind {
+
+    //机器人实例
+    val kaito: Kaito = Kaito()
+    //配置设置
+    internal lateinit var config: Config
+    //根目录
+    internal val root: File by lazy {
+        FileUtil.getJarLocation()
+    }
+    //日志
+    val KaitoLogger = KotlinLogging.logger("KaitoApp")
+    //全部用户
+    internal var users: MutableMap<Long, User> = ConcurrentHashMap()
+
+    //Jackson mapper
+    val mapper: ObjectMapper = ObjectMapper()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .registerModules(
+            JavaTimeModule().also {
+                it.addSerializer(
+                    LocalDateTime::class.java,
+                    LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))
+                )
+                it.addSerializer(LocalDate::class.java, LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
+                it.addSerializer(LocalTime::class.java, LocalTimeSerializer(DateTimeFormatter.ofPattern("HH:mm:ss")))
+                it.addDeserializer(
+                    LocalDate::class.java,
+                    LocalDateDeserializer(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
+                )
+                it.addDeserializer(
+                    LocalTime::class.java,
+                    LocalTimeDeserializer(DateTimeFormatter.ofPattern("HH:mm:ss"))
+                )
+            },
+            KotlinModule.Builder().enable(KotlinFeature.NullIsSameAsDefault)
+                .enable(KotlinFeature.NullToEmptyCollection)
+                .enable(KotlinFeature.NullToEmptyMap).build()
+        )
+        .setDateFormat(SimpleDateFormat("yyyy/MM/dd HH:mm:ss"))
+}

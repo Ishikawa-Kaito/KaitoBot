@@ -1,0 +1,76 @@
+package cn.zeshawn.kaitobot.manager
+
+import cn.zeshawn.kaitobot.KaitoMind
+import cn.zeshawn.kaitobot.command.base.ChatCommand
+import org.reflections.Reflections
+import org.reflections.util.ConfigurationBuilder
+
+object CommandManager {
+
+    private val commands:MutableSet<ChatCommand> = mutableSetOf()
+
+    // 注册一条命令
+    fun registerCommand(cmd:ChatCommand){
+        if (!commands.add(cmd)) {
+            KaitoMind.KaitoLogger.warn("[Command] 正在尝试注册已有命令 ${cmd.name}")
+        }else{
+            KaitoMind.KaitoLogger.info("[Command] 注册命令 ${cmd.name}")
+        }
+    }
+
+    // 注册很多条命令
+    fun registerCommands(commands: Array<ChatCommand>) {
+        commands.forEach {
+            registerCommand(it)
+        }
+    }
+
+    fun autoSetup(packageName:String){
+        KaitoMind.KaitoLogger.info("[Command] 开始自动注册命令，命令包名${packageName}")
+        val reflection = Reflections(ConfigurationBuilder().forPackage(packageName))
+        val jList = reflection.getSubTypesOf(ChatCommand::class.java)
+        val kList = jList.map { it.kotlin }
+        val oList = kList.mapNotNull { it.objectInstance }.toTypedArray()
+        this.registerCommands(oList)
+    }
+
+    fun getCommand(prefix:String):ChatCommand?{
+        val command = commands.parallelStream().filter {
+            canYouCallMeByThis(it,prefix)
+        }.findFirst()
+        return if(command.isPresent) command.get() else null
+    }
+
+    fun getCommandName(message: String): String {
+        val cmdPrefix = getCommandPrefix(message)
+        val index = message.indexOf(cmdPrefix) + cmdPrefix.length
+        return message.substring(index, message.length).split(" ")[0]
+    }
+
+    private fun getCommandPrefix(message: String): String {
+        if (message.isNotEmpty()) {
+            KaitoMind.config.commandPrefix.forEach {
+                if (message.startsWith(it)) {
+                    return it
+                }
+            }
+        }
+        return ""
+    }
+
+
+
+
+    private fun canYouCallMeByThis(cmd:ChatCommand, tryWord:String):Boolean{
+        when{
+            tryWord == cmd.name -> return true
+            cmd.alias.isNotEmpty()->{
+                cmd.alias.parallelStream().filter {
+                    it!!.contentEquals(tryWord)
+                }.findFirst().isPresent
+            }
+            else -> return false
+        }
+        return false
+    }
+}
