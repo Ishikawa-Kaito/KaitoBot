@@ -8,7 +8,6 @@ import net.mamoe.mirai.utils.BotConfiguration
 class Kaito {
     private lateinit var bot: Bot
 
-
     suspend fun login() {
         KaitoMind.KaitoLogger.info { "正在尝试登录......" }
         init()

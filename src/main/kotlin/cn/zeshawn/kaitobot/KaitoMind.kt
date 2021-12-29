@@ -44,6 +44,7 @@ object KaitoMind {
     //全部用户
     internal var users: MutableMap<Long, User> = ConcurrentHashMap()
 
+    //一些网易云评论
     internal val music163Comments = mutableListOf<String>()
 
 

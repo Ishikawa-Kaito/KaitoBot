@@ -3,6 +3,7 @@ package cn.zeshawn.kaitobot.manager
 import cn.zeshawn.kaitobot.KaitoMind
 import cn.zeshawn.kaitobot.command.base.ChatCommand
 import cn.zeshawn.kaitobot.entity.User
+import cn.zeshawn.kaitobot.entity.hasPermission
 import cn.zeshawn.kaitobot.util.LogUtil
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.events.MessageEvent
@@ -39,7 +40,7 @@ object MessageManager {
         val cmd = CommandManager.getCommand(cmdName) ?: return CommandResult(EmptyMessageChain, null)
 
         val user = User.getUserOrRegister(event.sender.id)
-        if (user.role < cmd.permission) {//权限不足，跳出
+        if (!user.hasPermission(cmd)) {//权限不足，跳出
             return CommandResult(EmptyMessageChain, cmd, CommandStatus.NoPermission())
         }
 

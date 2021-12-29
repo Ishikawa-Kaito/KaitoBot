@@ -2,11 +2,12 @@ package cn.zeshawn.kaitobot.entity
 
 import cn.hutool.core.lang.UUID
 import cn.zeshawn.kaitobot.KaitoMind
+import cn.zeshawn.kaitobot.command.base.ChatCommand
 
 data class User(
     val userId: Long,
     val uuid: UUID,
-    val role: UserRole
+    var role: UserRole
 ) {
     companion object {
         private fun register(id: Long): User {
@@ -21,9 +22,19 @@ data class User(
         }
 
         fun getUserOrRegister(qq: Long): User = getUser(qq) ?: register(qq)
+
     }
 }
 
 enum class UserRole {
     USER, ADMIN, DEV, OWNER;
+}
+
+fun User.hasPermission(cmd: ChatCommand): Boolean {
+    return if (this.userId == KaitoMind.config.ownerId) {
+        this.role = UserRole.OWNER
+        true
+    } else {
+        this.role >= cmd.permission
+    }
 }
