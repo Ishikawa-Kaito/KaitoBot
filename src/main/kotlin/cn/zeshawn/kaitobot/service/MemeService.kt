@@ -8,7 +8,7 @@ import java.io.InputStream
 object MemeService {
     private const val apiBase: String = "https://meme-api.herokuapp.com/gimme"
 
-    fun getRandomMemeUrl(): String {
+    private fun getRandomMemeUrl(): String {
         val response = HttpRequest.get(apiBase).setHttpProxy("127.0.0.1", 10809).execute().body()
         val responseString = response ?: return ""
 
@@ -26,7 +26,6 @@ object MemeService {
     fun getRandomMeme(): InputStream? {
         val url = getRandomMemeUrl()
         if (url.isNotEmpty()) {
-            val data = ByteArrayOutputStream()
             return HttpRequest.get(url).setHttpProxy("127.0.0.1", 10809).execute().bodyStream()
         }
         return null

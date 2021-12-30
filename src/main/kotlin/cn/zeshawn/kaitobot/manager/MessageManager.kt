@@ -1,6 +1,7 @@
 package cn.zeshawn.kaitobot.manager
 
 import cn.zeshawn.kaitobot.KaitoMind
+import cn.zeshawn.kaitobot.command.base.CallbackCommand
 import cn.zeshawn.kaitobot.command.base.ChatCommand
 import cn.zeshawn.kaitobot.entity.User
 import cn.zeshawn.kaitobot.entity.hasPermission
@@ -20,7 +21,10 @@ object MessageManager {
                     val res = callCommand(this)
 
                     if (res.status.isOk()) {
-                        this.subject.sendMessage(res.reply)
+                        val receipt = this.subject.sendMessage(res.reply)
+                        if (res.cmd is CallbackCommand){
+                            res.cmd.callback(receipt)
+                        }
                     }
                     // 返回命令执行结果
 
