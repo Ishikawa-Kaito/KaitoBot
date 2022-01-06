@@ -17,7 +17,7 @@ import net.mamoe.mirai.message.data.buildMessageChain
 import java.util.*
 import kotlin.concurrent.schedule
 
-object FurryPicCommand : ChatCommand,CallbackCommand {
+object FurryPicCommand : ChatCommand, CallbackCommand {
 
     override val name: String
         get() = "furrypic"
@@ -27,8 +27,8 @@ object FurryPicCommand : ChatCommand,CallbackCommand {
         get() = UserRole.USER
 
     override suspend fun execute(event: MessageEvent, args: List<String>, user: User): MessageChain {
-        var nsfwFlag:Boolean = false
-        if (args.size == 1 && args[0] in listOf("?","help","？"))
+        var nsfwFlag: Boolean = false
+        if (args.size == 1 && args[0] in listOf("?", "help", "？"))
             return getHelp().toChain()
         val imageStream = if (args.isEmpty()) {// 随机来张sfw图
             FurryPicService.randomPic(2)
@@ -49,23 +49,23 @@ object FurryPicCommand : ChatCommand,CallbackCommand {
             }
             FurryPicService.searchPic(1, keyword)
         }
-        val image = if (imageStream!=null){
+        val image = if (imageStream != null) {
             event.subject.uploadImage(imageStream)
-        }else{
+        } else {
             null
         }
-        return if (image != null){
-            if(nsfwFlag){
+        return if (image != null) {
+            if (nsfwFlag) {
                 buildMessageChain {
                     +FlashImage(image.imageId)
                 }
-            }else {
+            } else {
                 buildMessageChain {
                     +image
                 }
             }
-        }else{
-           "操作失败".toChain()
+        } else {
+            "操作失败".toChain()
         }
     }
 
@@ -83,7 +83,7 @@ object FurryPicCommand : ChatCommand,CallbackCommand {
     }
 
     override fun callback(receipt: MessageReceipt<Contact>) {
-        Timer().schedule(30000L){
+        Timer().schedule(30000L) {
             runBlocking {
                 receipt.recall()
             }

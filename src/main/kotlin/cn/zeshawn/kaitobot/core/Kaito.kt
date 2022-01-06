@@ -19,6 +19,10 @@ class Kaito {
         bot.join()
     }
 
+    fun getBot(): Bot {
+        return bot
+    }
+
     private fun init() {
         val config = BotConfiguration.Default.apply {
             fileBasedDeviceInfo()

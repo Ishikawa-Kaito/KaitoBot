@@ -20,32 +20,39 @@ dependencies {
     api("net.mamoe", "mirai-core-api", miraiVersion)     // 编译代码使用
     runtimeOnly("net.mamoe", "mirai-core", miraiVersion) // 运行时使用
 
-    implementation ("io.github.microutils:kotlin-logging-jvm:2.1.21")
+    implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
     implementation("org.reflections:reflections:0.10.2")
 
 
 
-    implementation ("cn.hutool:hutool-http:$hutoolVersion")
-    implementation ("cn.hutool:hutool-crypto:$hutoolVersion")
+    implementation("cn.hutool:hutool-http:$hutoolVersion")
+    implementation("cn.hutool:hutool-crypto:$hutoolVersion")
 
     implementation("net.mamoe.yamlkt:yamlkt:0.10.2")
 
 
-    implementation ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
-    implementation ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    implementation ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-    implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-jackson:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
 
 
-    implementation ("org.apache.commons:commons-lang3:3.12.0")
-    implementation ("org.apache.commons:commons-io:1.3.2")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("org.apache.commons:commons-io:1.3.2")
+
+    implementation("com.squareup:gifencoder:0.10.1")
+
+    implementation("org.xerial:sqlite-jdbc:3.36.0.3")
+    implementation("com.j256.ormlite:ormlite-core:6.1")
+    implementation("com.j256.ormlite:ormlite-jdbc:6.1")
+
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }

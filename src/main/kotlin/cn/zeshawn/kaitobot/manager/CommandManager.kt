@@ -10,7 +10,7 @@ object CommandManager {
     private val commands: MutableSet<ChatCommand> = mutableSetOf()
 
     // 注册一条命令
-    fun registerCommand(cmd: ChatCommand) {
+    private fun registerCommand(cmd: ChatCommand) {
         if (!commands.add(cmd)) {
             KaitoMind.KaitoLogger.warn("[Command] 正在尝试注册已有命令 ${cmd.name}")
         } else {
@@ -19,7 +19,7 @@ object CommandManager {
     }
 
     // 注册很多条命令
-    fun registerCommands(commands: Array<ChatCommand>) {
+    private fun registerCommands(commands: Array<ChatCommand>) {
         commands.forEach {
             registerCommand(it)
         }
@@ -28,10 +28,11 @@ object CommandManager {
     fun autoSetup(packageName: String) {
         KaitoMind.KaitoLogger.info("[Command] 开始自动注册命令，命令包名${packageName}")
         val reflection = Reflections(ConfigurationBuilder().forPackage(packageName))
-        val jList = reflection.getSubTypesOf(ChatCommand::class.java)
-        val kList = jList.map { it.kotlin }
-        val oList = kList.mapNotNull { it.objectInstance }.toTypedArray()
-        this.registerCommands(oList)
+        val commands = reflection.getSubTypesOf(ChatCommand::class.java)
+            .map { it.kotlin }
+            .mapNotNull { it.objectInstance }
+            .toTypedArray()
+        this.registerCommands(commands)
     }
 
     fun getCommand(cmdName: String): ChatCommand? {

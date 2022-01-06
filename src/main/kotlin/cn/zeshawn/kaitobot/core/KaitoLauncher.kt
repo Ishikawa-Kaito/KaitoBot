@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level
 import cn.zeshawn.kaitobot.KaitoMind
 import cn.zeshawn.kaitobot.manager.CommandManager
 import cn.zeshawn.kaitobot.manager.DataManager
+import cn.zeshawn.kaitobot.manager.ListenerManager
 import cn.zeshawn.kaitobot.manager.MessageManager
 import net.mamoe.mirai.Bot
 
@@ -43,6 +44,7 @@ object KaitoLauncher {
     fun intercept(bot: Bot) {
         // 消息拦截和事件拦截
         MessageManager.register(bot)
+        ListenerManager.setup()
     }
 
     private fun shutdownTask() {

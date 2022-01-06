@@ -55,5 +55,17 @@ object FileUtil {
         }
         return File(URLDecoder.decode(path.replace("target/classes/", ""), Charsets.UTF_8))
     }
+
+    fun newFile(path: String): File {
+        val file = File(path)
+        if (!file.exists()) {
+            if (file.parentFile != null) {
+                file.parentFile.mkdirs()
+            }
+            file.createNewFile()
+        }
+        return file
+    }
 }
+
 

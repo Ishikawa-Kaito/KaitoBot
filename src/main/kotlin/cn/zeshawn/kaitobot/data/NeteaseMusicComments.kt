@@ -5,7 +5,7 @@ import cn.zeshawn.kaitobot.data.base.DataFileBase
 import cn.zeshawn.kaitobot.util.loadClassFromJson
 import java.io.File
 
-object NeteaseMusicComments : DataFileBase(File("163MusicComments.json")) {
+object NeteaseMusicComments : DataFileBase(File(KaitoMind.root, "163MusicComments.json")) {
     override fun load() {
         KaitoMind.music163Comments.addAll(file.loadClassFromJson())
     }

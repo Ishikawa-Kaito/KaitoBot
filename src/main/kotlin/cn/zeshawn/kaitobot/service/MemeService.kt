@@ -2,7 +2,6 @@ package cn.zeshawn.kaitobot.service
 
 import cn.hutool.http.HttpRequest
 import cn.zeshawn.kaitobot.KaitoMind
-import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 object MemeService {
@@ -15,7 +14,7 @@ object MemeService {
         return try {
             val tree = KaitoMind.mapper.readTree(responseString)
             val memeUrl = tree["url"].asText()
-            KaitoMind.KaitoLogger.info("memeApi取得一张memeUrl(${memeUrl}")
+            KaitoMind.KaitoLogger.info("memeApi取得一张memeUrl(${memeUrl})")
             memeUrl
         } catch (e: Exception) {
             KaitoMind.KaitoLogger.error("emoApi调用失败: 回调结果异常 (${e.message})", e.cause)

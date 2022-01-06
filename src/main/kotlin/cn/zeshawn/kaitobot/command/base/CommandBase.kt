@@ -2,6 +2,7 @@ package cn.zeshawn.kaitobot.command.base
 
 import cn.zeshawn.kaitobot.entity.User
 import cn.zeshawn.kaitobot.entity.UserRole
+import cn.zeshawn.kaitobot.session.base.Session
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.MessageReceipt
@@ -19,11 +20,11 @@ interface ChatCommand {
 }
 
 interface ConversationCommand {
-    // 对话命令，暂时没空写
+    suspend fun handle(event: MessageEvent, session: Session, user: User)
 }
 
 
-interface CallbackCommand{
+interface CallbackCommand {
     // 此类命令执行完后需要回调
     fun callback(receipt: MessageReceipt<Contact>)
 }
