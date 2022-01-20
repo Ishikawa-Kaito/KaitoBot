@@ -44,7 +44,7 @@ object KaitoLauncher {
     fun intercept(bot: Bot) {
         // 消息拦截和事件拦截
         MessageManager.register(bot)
-        ListenerManager.setup()
+        ListenerManager.setup(bot)
     }
 
     private fun shutdownTask() {

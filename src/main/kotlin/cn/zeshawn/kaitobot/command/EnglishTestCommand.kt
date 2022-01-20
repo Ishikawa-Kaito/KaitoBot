@@ -113,8 +113,8 @@ object EnglishTestCommand : ChatCommand, ConversationCommand {
         } else {
             when (tryAnswer) {
                 "退考", "不玩了", "退出游戏" -> {
+                    event.subject.sendMessage("本堂考试结束。正确答案是{${answer.word}}")
                     SessionManager.removeSession(session)
-
                 }
                 "提示" -> {
                     event.subject.sendMessage("第一个字母是${session.answer.word[0]}")

@@ -42,11 +42,18 @@ object MessageManager {
         val cmdName = CommandManager.getCommandName(message)
         val user = User.getUserOrRegister(event.sender.id)
 
-        if (SessionManager.handleSessions(event, user)) {
-            return CommandResult(EmptyMessageChain, null, CommandStatus.ToSession())
-        }
+
         // 消息中是否包含命令
-        val cmd = CommandManager.getCommand(cmdName) ?: return CommandResult(EmptyMessageChain, null)
+        val cmd = CommandManager.getCommand(cmdName)
+
+        if (SessionManager.handleSessions(event, user)) {
+            val result = cmd?.execute(event, listOf(), user)
+            return CommandResult(result ?: EmptyMessageChain, cmd, CommandStatus.ToSession())
+        }
+
+        if (cmd == null) {
+            return CommandResult(EmptyMessageChain, null)
+        }
 
 
         if (!user.hasPermission(cmd)) {//权限不足，跳出
@@ -82,7 +89,7 @@ sealed class CommandStatus(val name: String, private val isSuccessful: Boolean) 
     class NoPermission : CommandStatus("无权限", false)
     class Failed : CommandStatus("失败", false)
     class NotACommand : CommandStatus("不是命令", false)
-    class ToSession : CommandStatus("移交会话处理", false)
+    class ToSession : CommandStatus("移交会话处理", true)
 
     fun isOk(): Boolean = this.isSuccessful
 }
