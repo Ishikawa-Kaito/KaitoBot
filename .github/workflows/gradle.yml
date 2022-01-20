@@ -32,6 +32,6 @@ jobs:
     - name: upload artifact
       uses: actions/upload-artifact@v2.3.1
       with:
-        name:KaitoBot
-        path:${{ github.workspace }}/build/libs
+        name: KaitoBot
+        path: ${{ github.workspace }}/build/libs
       
