@@ -26,8 +26,6 @@ object KaitoApp {
         try {
             runBlocking {
                 kaito.login()
-            }
-            runBlocking {
                 kaito.join()
             }
         } catch (e: Exception) {

@@ -7,6 +7,7 @@ import cn.zeshawn.kaitobot.entity.User
 import cn.zeshawn.kaitobot.entity.hasPermission
 import cn.zeshawn.kaitobot.util.LogUtil
 import net.mamoe.mirai.Bot
+import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.event.subscribeMessages
 import net.mamoe.mirai.message.data.EmptyMessageChain
@@ -21,6 +22,11 @@ object MessageManager {
                     val res = callCommand(this)
 
                     if (res.status.isOk()) {
+                        if(this.subject !is Group){
+                            if (this.subject !in bot.friends){
+                                return@always
+                            }
+                        }
                         val receipt = this.subject.sendMessage(res.reply)
                         if (res.cmd is CallbackCommand) {
                             res.cmd.callback(receipt)
