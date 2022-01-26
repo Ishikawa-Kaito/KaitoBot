@@ -22,8 +22,8 @@ object MessageManager {
                     val res = callCommand(this)
 
                     if (res.status.isOk()) {
-                        if(this.subject !is Group){
-                            if (this.subject !in bot.friends){
+                        if (this.subject !is Group) {
+                            if (this.subject !in bot.friends) {
                                 return@always
                             }
                         }

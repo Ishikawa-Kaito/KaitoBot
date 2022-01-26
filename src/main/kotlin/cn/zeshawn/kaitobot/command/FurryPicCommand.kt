@@ -71,6 +71,7 @@ object FurryPicCommand : ChatCommand, CallbackCommand {
 
     override fun getHelp(): String {
         return """
+            获取一张FA上的图片。
             /srk    [s,允许nsfw]    随机获得一张图，不保证任何可观赏性。
             /srk    [s,允许nsfw]    [关键词]    搜索获得一张图，仅支持英文。
             

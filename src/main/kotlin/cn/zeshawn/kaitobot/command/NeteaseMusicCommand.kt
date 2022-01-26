@@ -10,7 +10,7 @@ import net.mamoe.mirai.message.data.MessageChain
 
 object NeteaseMusicCommand : ChatCommand {
     override val name: String
-        get() = "网易云音乐命令"
+        get() = "网抑云"
     override val alias: List<String>
         get() = listOf("emo", "163")
     override val permission: UserRole

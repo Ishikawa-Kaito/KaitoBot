@@ -20,6 +20,9 @@ dependencies {
     api("net.mamoe", "mirai-core-api", miraiVersion)     // 编译代码使用
     runtimeOnly("net.mamoe", "mirai-core", miraiVersion) // 运行时使用
 
+
+    implementation("org.jsoup:jsoup:1.14.3")
+    implementation("com.github.xuwei-k:html2image:0.1.0")
     implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
     implementation("ch.qos.logback:logback-classic:1.2.3")
 

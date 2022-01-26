@@ -17,7 +17,7 @@ object AnswerBookListener : IListener {
     fun randomAnswer(event: MessageEvent) {
         val message = event.message
         val reg = ".*教.*|.*([吗呢吧])|.*(建议|意见|选择|怎|如何|要不要|该不该|能不能|可不可|行不行).*".toRegex()
-        if (reg.containsMatchIn(message.contentToString()) && message.any{it is At && it.target==event.bot.id}) {
+        if (reg.containsMatchIn(message.contentToString()) && message.any { it is At && it.target == event.bot.id }) {
 
             runBlocking {
                 event.subject.sendMessage(TheAnswerBookService.getAnswer())

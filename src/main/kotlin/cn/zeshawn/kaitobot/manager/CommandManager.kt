@@ -70,4 +70,8 @@ object CommandManager {
             else -> false
         }
     }
+
+    fun getAllCommand():List<ChatCommand>{
+        return commands.toList()
+    }
 }

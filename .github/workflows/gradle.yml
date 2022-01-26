@@ -12,20 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK
-      uses: actions/setup-java@v2.5.0
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    - uses: gradle/gradle-build-action@v2
-      with:
-        gradle-version: 7.2
-    - run: gradle clean shadowJar
-    - name: upload artifact
-      uses: actions/upload-artifact@v2.3.1
-      with:
-        name: KaitoBot
-        path: ${{ github.workspace }}/build/libs/*.jar
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2.5.0
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.2
+      - run: gradle clean shadowJar
+      - name: upload artifact
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: KaitoBot
+          path: ${{ github.workspace }}/build/libs/*.jar
     
       

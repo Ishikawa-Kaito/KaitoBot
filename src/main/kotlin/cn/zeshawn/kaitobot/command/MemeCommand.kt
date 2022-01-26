@@ -12,7 +12,7 @@ import net.mamoe.mirai.message.data.buildMessageChain
 
 object MemeCommand : ChatCommand {
     override val name: String
-        get() = "meme"
+        get() = "外网meme"
     override val alias: List<String>
         get() = listOf("memes", "梗图")
     override val permission: UserRole
