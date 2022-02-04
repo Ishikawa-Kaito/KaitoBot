@@ -51,7 +51,7 @@ object JikipediaService {
         return if (elements.isNotEmpty()) {
             buildString {
                 elements.forEach { ele ->
-                    if (ele.className().contains("text") || ele.className() == "highlight") {
+                    if (ele.className().contains("text") || ele.className() == "highlight" || ele.className().contains("link")) {
                         append(ele.text())
                     }
                 }

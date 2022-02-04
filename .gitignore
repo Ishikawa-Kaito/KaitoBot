@@ -27,4 +27,5 @@ device.json
 *.iws
 *.iml
 *.ipr
+/*.gif
 /out/
