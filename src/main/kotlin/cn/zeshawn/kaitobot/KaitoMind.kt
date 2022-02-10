@@ -2,6 +2,7 @@ package cn.zeshawn.kaitobot
 
 import cn.zeshawn.kaitobot.core.Kaito
 import cn.zeshawn.kaitobot.entity.Config
+import cn.zeshawn.kaitobot.entity.Group
 import cn.zeshawn.kaitobot.entity.User
 import cn.zeshawn.kaitobot.util.FileUtil
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -43,6 +44,9 @@ object KaitoMind {
 
     //全部用户
     internal var users: MutableMap<Long, User> = ConcurrentHashMap()
+
+    //全部群设置
+    internal var groups: MutableMap<Long, Group> = ConcurrentHashMap()
 
     //一些网易云评论
     internal val music163Comments = mutableListOf<String>()

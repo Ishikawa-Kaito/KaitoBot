@@ -19,6 +19,6 @@ internal class JikipediaServiceTest {
         println(id)
         assertEquals(id, 1040642445)
         val res = JikipediaService.getDefinition(id)
-        assertNotEquals(res.second.size,0)
+        assertNotEquals(res.second.size, 0)
     }
 }

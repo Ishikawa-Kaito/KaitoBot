@@ -27,12 +27,19 @@ object MessageManager {
                                 return@always
                             }
                         }
+
+                        // 空消息直接返回，否则会弹出mirai异常，看的我烦
+                        if (res.reply is EmptyMessageChain) return@always
+
+                        // 返回命令执行结果
                         val receipt = this.subject.sendMessage(res.reply)
+
+                        // 回调
                         if (res.cmd is CallbackCommand) {
                             res.cmd.callback(receipt)
                         }
                     }
-                    // 返回命令执行结果
+
 
                 } catch (e: Exception) {
                     KaitoMind.KaitoLogger.warn("[Command] 尝试执行命令时发生错误")
@@ -67,7 +74,7 @@ object MessageManager {
         }
 
         val prefix = CommandManager.getCommandPrefix(message)
-        return if (prefix.isNotEmpty()) {
+        return if (prefix.isNotEmpty() || ("" in KaitoMind.config.commandPrefix)) {
             // 前缀末尾下标
             val index = message.indexOf(prefix) + prefix.length
 

@@ -26,6 +26,7 @@ object FurryPicCommand : ChatCommand, CallbackCommand {
     override val permission: UserRole
         get() = UserRole.USER
 
+
     override suspend fun execute(event: MessageEvent, args: List<String>, user: User): MessageChain {
         var nsfwFlag: Boolean = false
         if (args.size == 1 && args[0] in listOf("?", "help", "？"))

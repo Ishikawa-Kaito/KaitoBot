@@ -44,6 +44,9 @@ object CommandManager {
 
     fun getCommandName(message: String): String {
         val cmdPrefix = getCommandPrefix(message)
+        if (cmdPrefix == "") {
+            return message.split(" ")[0]
+        }
         val index = message.indexOf(cmdPrefix) + cmdPrefix.length
         return message.substring(index, message.length).split(" ")[0]
     }
@@ -71,7 +74,7 @@ object CommandManager {
         }
     }
 
-    fun getAllCommand():List<ChatCommand>{
+    fun getAllCommand(): List<ChatCommand> {
         return commands.toList()
     }
 }

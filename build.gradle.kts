@@ -56,6 +56,9 @@ dependencies {
     implementation("com.j256.ormlite:ormlite-core:6.1")
     implementation("com.j256.ormlite:ormlite-jdbc:6.1")
 
+    implementation("com.kennycason:kumo-core:1.28")
+    implementation("com.kennycason:kumo-tokenizers:1.28")
+    implementation("com.huaban:jieba-analysis:1.0.2")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }

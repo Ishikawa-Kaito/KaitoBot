@@ -11,11 +11,11 @@ import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.buildMessageChain
 
-object HelpCommand : ChatCommand{
+object HelpCommand : ChatCommand {
     override val name: String
         get() = "帮助"
     override val alias: List<String>
-        get() = listOf("help","?","？")
+        get() = listOf("help", "?", "？")
     override val permission: UserRole
         get() = UserRole.USER
 
@@ -28,7 +28,7 @@ object HelpCommand : ChatCommand{
                 }
                 +PlainText("输入/? [命令] 可以获得命令的详细帮助。")
             }
-        } else{
+        } else {
             val arg = args.joinToString("")
             CommandManager.getCommand(arg)?.getHelp()?.toChain() ?: EmptyMessageChain
         }

@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream
 object JikipediaService {
     private const val searchUrl: String = "https://jikipedia.com/search?phrase="
     private const val definitionUrl: String = "https://jikipedia.com/definition/"
-    const val UA =
+    private const val UA =
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36 Edg/94.0.992.50"
 
 
@@ -41,17 +41,20 @@ object JikipediaService {
         val title = doc.getElementsByClass("title")[0]?.text() ?: "获取失败"
         val render = doc.getElementsByClass("brax-render")
         val content = render.first()?.allElements?.let { concatContent(it) }
+        val result = "${title}:\n${content}"
         val cardMiddle = doc.getElementsByClass("card-middle")
         val images = cardMiddle.first()?.getElementsByClass("show-images-img")
         val imageList = images?.let { getImages(it) }
-        return Pair(content ?: "", imageList?: listOf())
+        return Pair(result, imageList ?: listOf())
     }
 
     private fun concatContent(elements: Elements): String {
         return if (elements.isNotEmpty()) {
             buildString {
                 elements.forEach { ele ->
-                    if (ele.className().contains("text") || ele.className() == "highlight" || ele.className().contains("link")) {
+                    if (ele.className().contains("text") || ele.className() == "highlight" || ele.className()
+                            .contains("link")
+                    ) {
                         append(ele.text())
                     }
                 }

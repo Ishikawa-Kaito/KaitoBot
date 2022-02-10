@@ -18,5 +18,6 @@ object ListenerManager {
             .forEach {
                 it.register(bot)
             }
+
     }
 }
