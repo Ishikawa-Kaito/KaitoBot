@@ -26,10 +26,10 @@ object WordCloudService {
             it.setWordTokenizer(JieBaTokenizer())
         }
         val frequencies = frequencyAnalyzer.load(Group.getGroupOrAdd(id).wordList)
-        val dimension = Dimension(1000, 1000)
+        val dimension = Dimension(700, 700)
         val wordCloud = WordCloud(dimension, CollisionMode.PIXEL_PERFECT).also {
             it.setPadding(2)
-            it.setBackground(CircleBackground(500))
+            it.setBackground(CircleBackground(350))
             it.setBackgroundColor(Color(0xFFFFFF))
             it.setKumoFont(KumoFont("黑体", FontWeight.PLAIN))
             it.setColorPalette(
@@ -43,7 +43,7 @@ object WordCloudService {
                         "4055F1"
                     ).map { c -> c.toIntOrNull(16)?.let { it1 -> Color(it1) } })
             )
-            it.setFontScalar(LinearFontScalar(10, 40))
+            it.setFontScalar(LinearFontScalar(15, 60))
         }
         wordCloud.build(frequencies)
         val stream = ByteArrayOutputStream()

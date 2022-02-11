@@ -12,6 +12,7 @@ import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.data.EmptyMessageChain
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.buildMessageChain
+import java.time.Instant
 
 object WordCloudCommand : ChatCommand {
     override val name: String
@@ -21,15 +22,27 @@ object WordCloudCommand : ChatCommand {
     override val permission: UserRole
         get() = UserRole.USER
 
+    private var lastCall: Long = 0L
+
     override suspend fun execute(event: MessageEvent, args: List<String>, user: User): MessageChain {
         if (event.subject !is Group) return EmptyMessageChain
         val group = cn.zeshawn.kaitobot.entity.Group.getGroupOrAdd(event.subject.id)
         when (args.size) {
             0 -> {
+                if (Instant.now().epochSecond - lastCall < 60) {
+                    if ((event.subject as Group).members.getOrFail(event.sender.id).permission
+                        < MemberPermission.ADMINISTRATOR &&
+                        User.getUserOrRegister(event.sender.id).role < UserRole.ADMIN
+                    ) {
+                        // 距离上次调用不足60秒，而且又不是管理员的话，就不理他
+                        return EmptyMessageChain
+                    }
+                }
                 return if (group.params["word_cloud"] != true) {
                     "本群未开启词云统计功能，请管理员使用open命令开启。".toChain()
                 } else {
                     val image = event.subject.uploadImage(WordCloudService.getWordCloud(group.id))
+                    lastCall = Instant.now().epochSecond
                     buildMessageChain { +image }
                 }
             }
@@ -72,6 +85,6 @@ object WordCloudCommand : ChatCommand {
     }
 
     override fun getHelp(): String = """
-        
+        收记录群里频率出现最高的一些词。
     """.trimIndent()
 }
