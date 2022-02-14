@@ -14,7 +14,7 @@ object WordData : DataFileBase(File("${KaitoMind.root}/data", "WordData.db")) {
     private lateinit var connSource: JdbcPooledConnectionSource
     private lateinit var dao: Dao<Word, Int>
     override fun load() {
-        Class.forName("org.sqlite.JDBC");
+        Class.forName("org.sqlite.JDBC")
         connSource = JdbcPooledConnectionSource("jdbc:sqlite:${KaitoMind.root}/data/WordData.db")
         connSource.setMaxConnectionAgeMillis(5 * 60 * 1000)
         dao = DaoManager.createDao(connSource, Word::class.java)
@@ -29,7 +29,7 @@ object WordData : DataFileBase(File("${KaitoMind.root}/data", "WordData.db")) {
 
     }
 
-    public fun getRandomWord(rank: VocabularyRank): Word {
+    fun getRandomWord(rank: VocabularyRank): Word {
         val bookId = rank.rank
         val words = dao.queryForEq("bookId", bookId)
         return words.random()

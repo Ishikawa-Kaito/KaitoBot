@@ -51,8 +51,8 @@ object PetGifService {
             .setDitherer(FloydSteinbergDitherer.INSTANCE)
             .setDisposalMethod(DisposalMethod.DO_NOT_DISPOSE)
         val delayCentiSeconds = option::class.java.getDeclaredField("delayCentiseconds")
-        delayCentiSeconds.isAccessible = true;
-        delayCentiSeconds.set(option, (100.0F / 15).roundToInt());
+        delayCentiSeconds.isAccessible = true
+        delayCentiSeconds.set(option, (100.0F / 15).roundToInt())
         for (i in 0 until MAX_FRAME) {
             val rgb = generateFrame(avatar, i).getRGB(0, 0, 112, 112, IntArray(112 * 112), 0, 112)
             val frame = Image.fromRgb(rgb, 112)

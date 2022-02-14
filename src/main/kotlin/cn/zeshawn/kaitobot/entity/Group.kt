@@ -19,6 +19,14 @@ data class Group(
             return KaitoMind.groups[id]
         }
 
+        fun modifyGroup(newGroup: Group): Boolean {
+            if (getGroup(newGroup.id) != null) {
+                KaitoMind.groups[newGroup.id] = newGroup
+                return true
+            }
+            return false
+        }
+
         fun getGroupOrAdd(id: Long): Group = getGroup(id) ?: addGroup(id)
     }
 }

@@ -56,6 +56,7 @@ object WordCloudCommand : ChatCommand {
                             User.getUserOrRegister(event.sender.id).role > UserRole.ADMIN
                         ) {
                             group.params["word_cloud"] = true
+                            cn.zeshawn.kaitobot.entity.Group.modifyGroup(group)
                             "已开启词云统计。".toChain()
                         } else
                             EmptyMessageChain
@@ -68,6 +69,7 @@ object WordCloudCommand : ChatCommand {
                             User.getUserOrRegister(event.sender.id).role > UserRole.ADMIN
                         ) {
                             group.params["word_cloud"] = false
+                            cn.zeshawn.kaitobot.entity.Group.modifyGroup(group)
                             "已关闭词云统计。".toChain()
                         } else
                             EmptyMessageChain

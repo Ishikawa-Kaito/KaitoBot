@@ -3,11 +3,13 @@ package cn.zeshawn.kaitobot.entity
 import cn.hutool.core.lang.UUID
 import cn.zeshawn.kaitobot.KaitoMind
 import cn.zeshawn.kaitobot.command.base.ChatCommand
+import java.util.concurrent.ConcurrentHashMap
 
 data class User(
     val userId: Long,
     val uuid: UUID,
-    var role: UserRole
+    var role: UserRole,
+    val currency: Map<String, Long> = ConcurrentHashMap()
 ) {
     companion object {
         private fun register(id: Long): User {
