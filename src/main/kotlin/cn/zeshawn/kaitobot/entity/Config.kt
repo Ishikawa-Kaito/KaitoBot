@@ -6,6 +6,6 @@ data class Config(
     var isDebugMode: Boolean = false,
     var ownerId: Long = 0L,
     var commandPrefix: MutableList<String> = mutableListOf("/"),
-    var NeteaseMusicApiBase: String = "http://119.29.171.164:3000",
-    var NeteaseEmoSongList: List<Long> = listOf(5130412130L, 428950382L)
+    var NeteaseMusicApiBase: String = "",
+    var NeteaseEmoSongList: List<Long> = listOf()
 )

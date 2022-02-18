@@ -16,7 +16,7 @@ object EmojiMixService {
     private fun checkEmojiMix(e1: String, e2: String): Boolean {
         if (checkLocalCache(e1, e2)) {
             return true
-        } else if (checkServerExistence(e1, e2)) {
+        } else if (checkServerExistence(e2, e1)) {
             return true
         }
         return false

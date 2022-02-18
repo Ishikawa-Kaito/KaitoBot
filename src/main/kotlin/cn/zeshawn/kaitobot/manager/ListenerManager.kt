@@ -14,7 +14,6 @@ object ListenerManager {
         reflection.getSubTypesOf(IListener::class.java)
             .map { it.kotlin }
             .mapNotNull { it.objectInstance }
-            .toTypedArray()
             .forEach {
                 it.register(bot)
             }
