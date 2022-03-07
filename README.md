@@ -1,7 +1,7 @@
 ## KaitoBot
 ![](.img/title.png) 
 ---
-> **KaitoBot is Tencent-QQ bot written by Kaito. It is technically a "shortcut" for some Internet services.**  
+> **KaitoBot is a Tencent-QQ bot written by Kaito. It is technically a "shortcut" for some Internet services.**  
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/808691d5db004831b581fb511945e278)](https://www.codacy.com/gh/Ishikawa-Kaito/KaitoBot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ishikawa-Kaito/KaitoBot&amp;utm_campaign=Badge_Grade)
 ![example workflow](https://github.com/Ishikawa-Kaito/KaitoBot/workflows/Build/badge.svg)  
