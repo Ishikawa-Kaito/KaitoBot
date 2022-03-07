@@ -2,6 +2,7 @@ package cn.zeshawn.kaitobot.command
 
 import cn.zeshawn.kaitobot.command.base.CallbackCommand
 import cn.zeshawn.kaitobot.command.base.ChatCommand
+import cn.zeshawn.kaitobot.command.base.Disabled
 import cn.zeshawn.kaitobot.entity.User
 import cn.zeshawn.kaitobot.entity.UserRole
 import cn.zeshawn.kaitobot.service.FurryPicService
@@ -17,6 +18,7 @@ import net.mamoe.mirai.message.data.buildMessageChain
 import java.util.*
 import kotlin.concurrent.schedule
 
+@Disabled
 object FurryPicCommand : ChatCommand, CallbackCommand {
 
     override val name: String
@@ -28,7 +30,7 @@ object FurryPicCommand : ChatCommand, CallbackCommand {
 
 
     override suspend fun execute(event: MessageEvent, args: List<String>, user: User): MessageChain {
-        var nsfwFlag: Boolean = false
+        var nsfwFlag = false
         if (args.size == 1 && args[0] in listOf("?", "help", "？"))
             return getHelp().toChain()
         val imageStream = if (args.isEmpty()) {// 随机来张sfw图

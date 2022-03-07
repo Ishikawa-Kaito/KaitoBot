@@ -2,8 +2,10 @@ package cn.zeshawn.kaitobot.manager
 
 import cn.zeshawn.kaitobot.KaitoMind
 import cn.zeshawn.kaitobot.command.base.ChatCommand
+import cn.zeshawn.kaitobot.command.base.Disabled
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
+import kotlin.reflect.full.hasAnnotation
 
 object CommandManager {
 
@@ -30,6 +32,7 @@ object CommandManager {
         val reflection = Reflections(ConfigurationBuilder().forPackage(packageName))
         val commands = reflection.getSubTypesOf(ChatCommand::class.java)
             .map { it.kotlin }
+            .filter { !it.hasAnnotation<Disabled>() }
             .mapNotNull { it.objectInstance }
             .toTypedArray()
         this.registerCommands(commands)

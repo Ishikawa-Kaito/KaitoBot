@@ -19,11 +19,7 @@ object NeteaseMusicCommand : ChatCommand {
     override suspend fun execute(event: MessageEvent, args: List<String>, user: User): MessageChain {
         return if (args.isEmpty()) {
             // 随机挑选一条emo
-            try {
-                NeteaseService.getRandomOne()
-            } catch (_: Exception) {
-                NeteaseService.getBackupOne()
-            }
+            NeteaseService.getBackupOne()
 
         } else if (args.size == 1 &&
             (args[0].contentEquals("?") || args[0].contentEquals("help"))

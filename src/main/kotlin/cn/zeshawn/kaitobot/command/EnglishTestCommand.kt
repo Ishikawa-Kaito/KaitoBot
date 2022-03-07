@@ -108,7 +108,7 @@ object EnglishTestCommand : ChatCommand, ConversationCommand {
                 event.subject.sendMessage(sb.toString().toChain())
                 SessionManager.removeSession(session)
             } else {
-                event.subject.sendMessage("${attender.username}认为是${tryAnswer}\n一个不错的猜测但是是错误答案。".toChain())
+                event.subject.sendMessage("${attender.username}认为是${tryAnswer}\nA good guess but a wrong answer.".toChain())
             }
         } else {
             when (tryAnswer) {

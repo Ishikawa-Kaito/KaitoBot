@@ -16,7 +16,7 @@ object EmojiMixService {
     private fun checkEmojiMix(e1: String, e2: String): Boolean {
         if (checkLocalCache(e1, e2)) {
             return true
-        } else if (checkServerExistence(e2, e1)) {
+        } else if (checkServerExistence(e1, e2)) {
             return true
         }
         return false
@@ -44,6 +44,8 @@ object EmojiMixService {
     fun getEmojiMix(e1: String, e2: String): File? {
         if (checkEmojiMix(e1, e2)) {
             return File("${localCacheDir}/${e1.getEmojiUnicode()}_${e2.getEmojiUnicode()}.png")
+        } else if (checkEmojiMix(e2, e1)) {
+            return File("${localCacheDir}/${e2.getEmojiUnicode()}_${e1.getEmojiUnicode()}.png")
         }
         return null
     }

@@ -30,3 +30,5 @@ interface CallbackCommand {
 }
 
 
+annotation class Disabled
+annotation class NotForUser
