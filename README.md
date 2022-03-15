@@ -1,11 +1,11 @@
 ## KaitoBot
 ![](.img/title.png) 
 ---
-> **KaitoBot is Tencent-QQ bot written by Kaito. It is technically a "shortcut" for some Internet services.**  
+> **KaitoBot is a Tencent-QQ bot written by Kaito. It is technically a "shortcut" for some Internet services.**  
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/808691d5db004831b581fb511945e278)](https://www.codacy.com/gh/Ishikawa-Kaito/KaitoBot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Ishikawa-Kaito/KaitoBot&amp;utm_campaign=Badge_Grade)
-![example workflow](https://github.com/Ishikawa-Kaito/KaitoBot/workflows/Build/badge.svg)
-###Inspired by a lot of other developers and projects below:
+![example workflow](https://github.com/Ishikawa-Kaito/KaitoBot/workflows/Build/badge.svg)  
+### Inspired by a lot of other developers and projects below:
 
 [Comet-Bot](https://github.com/StarWishsama/Comet-Bot) \
 [Meme-Api](https://github.com/D3vd/Meme_Api) \
@@ -13,8 +13,8 @@
 [emojimix](https://github.com/Tikolu/emojimix) \
 [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 
-This program is powered by High-performance QQ bot framework [Mirai](https://github.com/mamoe/mirai)  \
-and is licensed under [AGPLv3](https://github.com/Ishikawa-Kaito/KaitoBot/blob/master/LICENSE)
+### This program is powered by High-performance QQ bot framework [Mirai](https://github.com/mamoe/mirai) and licensed under [AGPLv3](https://github.com/Ishikawa-Kaito/KaitoBot/blob/master/LICENSE)
+
 ------
 
     Copyright (C) 2021-2022 Ishikawa_Kaito
