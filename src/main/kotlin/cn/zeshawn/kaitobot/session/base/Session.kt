@@ -9,7 +9,7 @@ open class Session(
 ) {
     val users: MutableSet<SessionUser> = mutableSetOf()
     val createdTime: LocalDateTime = LocalDateTime.now()
-
+    var lastActiveTime: LocalDateTime = LocalDateTime.now()
 }
 
 data class SessionTarget(

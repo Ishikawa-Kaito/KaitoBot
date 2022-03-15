@@ -29,6 +29,8 @@ interface CallbackCommand {
     fun callback(receipt: MessageReceipt<Contact>)
 }
 
-
+// 标记为命令不可用
 annotation class Disabled
+
+// 标记为命令将不在用户手册出现，但仍然可以调用
 annotation class NotForUser

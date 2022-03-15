@@ -8,6 +8,7 @@ import cn.zeshawn.kaitobot.session.base.SessionTarget
 import cn.zeshawn.kaitobot.util.getLastingTimeAsString
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.MessageEvent
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -65,6 +66,9 @@ object SessionManager {
             SessionTarget(privateId = e.sender.id)
         }
 
+
+        sessionPool.removeAll { Duration.between(it.lastActiveTime, time).seconds < 60 }  // 清除60s无人应答的会话
+
         val sessionStream = sessionPool.stream()
             .filter { it.target.groupId == target.groupId || it.target.privateId == target.privateId }
 
@@ -78,6 +82,7 @@ object SessionManager {
             if (CommandManager.getCommandPrefix(e.message.contentToString()).isEmpty()) {
                 if (session.handler is ConversationCommand) {
                     session.handler.handle(e, session, user)
+                    session.lastActiveTime = LocalDateTime.now()
                 }
             }
         }

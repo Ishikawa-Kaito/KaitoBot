@@ -2,6 +2,7 @@ package cn.zeshawn.kaitobot.command
 
 import cn.zeshawn.kaitobot.command.base.ChatCommand
 import cn.zeshawn.kaitobot.command.base.NotForUser
+import cn.zeshawn.kaitobot.entity.Group
 import cn.zeshawn.kaitobot.entity.User
 import cn.zeshawn.kaitobot.entity.UserRole
 import net.mamoe.mirai.event.events.MessageEvent
@@ -26,6 +27,18 @@ object AdminCommand : ChatCommand {
                 "speak" -> {
                     val id = args[1].toLong()
                     event.bot.getGroup(id)?.sendMessage(args[2])
+                }
+                "achat" -> {
+                    val id = args[1].toLong()
+                    event.bot.getGroup(id)?.let {
+                        Group.getGroupOrAdd(it.id).params["answer"] = args[2].toBoolean()
+                    }
+                }
+                "wc" -> {
+                    val id = args[1].toLong()
+                    event.bot.getGroup(id)?.let {
+                        Group.getGroupOrAdd(it.id).params["word_cloud"] = args[2].toBoolean()
+                    }
                 }
             }
         }

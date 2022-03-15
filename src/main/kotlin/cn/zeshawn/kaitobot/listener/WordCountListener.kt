@@ -18,5 +18,6 @@ object WordCountListener : IListener {
                 is PlainText -> group.wordList.add(it.content.trim())
             }
         }
+
     }
 }
