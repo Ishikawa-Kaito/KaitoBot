@@ -5,9 +5,12 @@ import cn.zeshawn.kaitobot.command.base.NotForUser
 import cn.zeshawn.kaitobot.entity.Group
 import cn.zeshawn.kaitobot.entity.User
 import cn.zeshawn.kaitobot.entity.UserRole
+import cn.zeshawn.kaitobot.service.WordCloudService
+import net.mamoe.mirai.contact.Contact.Companion.uploadImage
 import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.data.EmptyMessageChain
 import net.mamoe.mirai.message.data.MessageChain
+import net.mamoe.mirai.message.data.buildMessageChain
 
 
 @NotForUser
@@ -35,6 +38,11 @@ object AdminCommand : ChatCommand {
                     }
                 }
                 "wc" -> {
+                    if (args.size < 3) {
+                        val id = args[1].toLong()
+                        val image = event.subject.uploadImage(WordCloudService.getWordCloud(id))
+                        return buildMessageChain { +image }
+                    }
                     val id = args[1].toLong()
                     event.bot.getGroup(id)?.let {
                         Group.getGroupOrAdd(it.id).params["word_cloud"] = args[2].toBoolean()

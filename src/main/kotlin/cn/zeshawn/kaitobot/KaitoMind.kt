@@ -31,6 +31,8 @@ object KaitoMind {
     //机器人实例
     val kaito: Kaito = Kaito()
 
+    val debug: Boolean = System.getProperty("debug", "false").toBoolean()
+
     //配置设置
     internal lateinit var config: Config
 
@@ -74,10 +76,12 @@ object KaitoMind {
                     LocalTime::class.java,
                     LocalTimeDeserializer(DateTimeFormatter.ofPattern("HH:mm:ss"))
                 )
+
             },
             KotlinModule.Builder().enable(KotlinFeature.NullIsSameAsDefault)
                 .enable(KotlinFeature.NullToEmptyCollection)
                 .enable(KotlinFeature.NullToEmptyMap).build()
+
         )
         .setDateFormat(SimpleDateFormat("yyyy/MM/dd HH:mm:ss"))
 }

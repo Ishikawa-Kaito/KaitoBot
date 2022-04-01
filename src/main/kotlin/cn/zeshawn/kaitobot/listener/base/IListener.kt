@@ -2,6 +2,7 @@ package cn.zeshawn.kaitobot.listener.base
 
 import cn.zeshawn.kaitobot.KaitoMind
 import net.mamoe.mirai.Bot
+import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.event.Event
 import net.mamoe.mirai.event.globalEventChannel
 import kotlin.reflect.KClass
@@ -44,12 +45,26 @@ fun IListener.register(bot: Bot) {
         methodEvent.forEach { (clazz, method) ->
             if (clazz.isSubclassOf(Event::class)) {
                 bot.globalEventChannel().subscribeAlways(clazz) { subEvent ->
-                    method.call(this@register, subEvent)
+                    if (subEvent.filterDebug())
+                        method.call(this@register, subEvent)
                 }
             }
         }
     }
 
     KaitoMind.KaitoLogger.info("[Listener] 已注册 $name 监听器")
+}
 
+fun Event.filterDebug(): Boolean {
+    if (KaitoMind.debug) {
+        this.javaClass.methods.forEach {
+            if (it.name in listOf("getSubject")) {
+                if ((it.invoke(this) as Group).id == 1035268136L) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    return true
 }

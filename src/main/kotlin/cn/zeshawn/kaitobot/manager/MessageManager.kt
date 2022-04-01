@@ -18,6 +18,11 @@ object MessageManager {
     fun register(bot: Bot) {
         bot.eventChannel.subscribeMessages {
             always {
+                if (KaitoMind.debug) { // 调试模式
+                    if (this.subject.id != 1035268136L) {
+                        return@always
+                    }
+                }
                 try {
                     val res = callCommand(this)
 

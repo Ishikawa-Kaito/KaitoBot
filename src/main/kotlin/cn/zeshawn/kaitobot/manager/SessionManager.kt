@@ -67,7 +67,7 @@ object SessionManager {
         }
 
 
-        sessionPool.removeAll { Duration.between(it.lastActiveTime, time).seconds < 60 }  // 清除60s无人应答的会话
+        sessionPool.removeAll { Duration.between(it.lastActiveTime, time).seconds > 120 }  // 清除60s无人应答的会话
 
         val sessionStream = sessionPool.stream()
             .filter { it.target.groupId == target.groupId || it.target.privateId == target.privateId }
@@ -81,8 +81,8 @@ object SessionManager {
         for (session in sessionToHandle) {
             if (CommandManager.getCommandPrefix(e.message.contentToString()).isEmpty()) {
                 if (session.handler is ConversationCommand) {
-                    session.handler.handle(e, session, user)
                     session.lastActiveTime = LocalDateTime.now()
+                    session.handler.handle(e, session, user)
                 }
             }
         }
@@ -104,4 +104,12 @@ object SessionManager {
             .filter { (it.target.groupId == target.groupId || it.target.privateId == target.privateId) }
             .count() > 0
     }
+
+    fun removeDeprecatedSessions() {
+        val time = LocalDateTime.now()
+        val deprecatedSessions = sessionPool.filter { Duration.between(it.lastActiveTime, time).seconds > 120 }
+        deprecatedSessions.forEach { }
+        sessionPool.removeAll(deprecatedSessions.toSet())
+    }
+
 }

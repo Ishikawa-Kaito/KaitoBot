@@ -33,17 +33,18 @@ object EnglishTestCommand : ChatCommand, ConversationCommand {
 
     override suspend fun execute(event: MessageEvent, args: List<String>, user: User): MessageChain {
         if (!SessionManager.hasSessionBySubject(event.subject.id, this::class.java)) {
+            var rank = (1 until 16).random() - 1
             val word = when {
                 args.isEmpty() -> {
-                    WordData.getRandomWord(VocabularyRank.values()[(1 until 16).random() - 1])
+                    WordData.getRandomWord(VocabularyRank.values()[rank])
                 }
                 args.size == 1 -> {
                     if (args[0] in listOf("?", "help")) return getHelp().toChain()
                     else {
                         if (args[0].isNumeric()) {
-                            val rank = args[0].toInt()
-                            if (rank in (1 until 16))
-                                WordData.getRandomWord(VocabularyRank.values()[rank - 1])
+                            rank = args[0].toInt() - 1
+                            if (rank in (0 until 15))
+                                WordData.getRandomWord(VocabularyRank.values()[rank])
                             else
                                 return getHelp().toChain()
                         } else {
@@ -62,8 +63,9 @@ object EnglishTestCommand : ChatCommand, ConversationCommand {
             KaitoMind.KaitoLogger.info("[记单词] ($sessionTarget) 生成的题目是 (${word.word}, ${word.tran})")
             SessionManager.insertSession(EnglishTestSession(sessionTarget, word))
             return """
-                题目是：
-                ${word.tran} ${word.pos}
+                本单词来自${VocabularyRank.values()[rank].desc}
+                ${word.tran}
+                ${word.pos}
             """.trimIndent().toChain()
         } else {
             return "上一局还没结束呢。".toChain()
@@ -96,7 +98,7 @@ object EnglishTestCommand : ChatCommand, ConversationCommand {
             }
             attender.answerTimes += 1
 
-            if (tryAnswer == answer.word) {
+            if (tryAnswer.lowercase() == answer.word.lowercase()) {
                 session.usedTime = Duration.between(session.createdTime, LocalDateTime.now())
                 val sb =
                     StringBuilder("${attender.username} 答对了!\n总用时: ${session.usedTime.seconds}s\n\n")
@@ -108,12 +110,12 @@ object EnglishTestCommand : ChatCommand, ConversationCommand {
                 event.subject.sendMessage(sb.toString().toChain())
                 SessionManager.removeSession(session)
             } else {
-                event.subject.sendMessage("${attender.username}认为是${tryAnswer}\nA good guess but a wrong answer.".toChain())
+                event.subject.sendMessage("${attender.username}认为是${tryAnswer}\n很遗憾，猜错了。".toChain())
             }
         } else {
             when (tryAnswer) {
-                "退考", "不玩了", "退出游戏" -> {
-                    event.subject.sendMessage("本堂考试结束。正确答案是{${answer.word}}")
+                "退出", "放弃", "结束" -> {
+                    event.subject.sendMessage("本次测试结束。正确答案是{${answer.word}}")
                     SessionManager.removeSession(session)
                 }
                 "提示" -> {

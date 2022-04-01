@@ -16,7 +16,7 @@ object GroupInviteListener : IListener {
     fun groupInviteEvent(event: BotInvitedJoinGroupRequestEvent) {
         val groupId = event.groupId
         val invitorId = event.invitorId
-        val requestMsg = "${invitorId}邀请机器人加入${groupId}，是否同意"
+        val requestMsg = "${invitorId}邀请机器人加入${groupId}，是否同意(ok/no)"
         runBlocking {
             event.bot.getFriend(KaitoMind.config.ownerId)!!.sendMessage(requestMsg)
             event.bot.eventChannel.filter {
@@ -31,6 +31,5 @@ object GroupInviteListener : IListener {
             }
         }
     }
-
 
 }
