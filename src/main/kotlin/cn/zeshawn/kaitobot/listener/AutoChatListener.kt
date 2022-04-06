@@ -27,7 +27,8 @@ object AutoChatListener : IListener {
         val group = Group.getGroupOrAdd(event.group.id)
         if (group.params["answer"] != true) return
 
-        val letTheGodDecide = (0..10).random() > -1
+        val letTheGodDecide = (0..10).random() > 7
+
         if (letTheGodDecide) return
 
         if (reply != EmptyMessageChain) {

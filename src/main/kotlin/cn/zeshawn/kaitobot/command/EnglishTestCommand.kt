@@ -115,12 +115,13 @@ object EnglishTestCommand : ChatCommand, ConversationCommand {
         } else {
             when (tryAnswer) {
                 "退出", "放弃", "结束" -> {
-                    event.subject.sendMessage("本次测试结束。正确答案是{${answer.word}}")
+                    event.subject.sendMessage("本次测试结束。正确答案是 ${answer.word}")
                     SessionManager.removeSession(session)
                 }
                 "提示" -> {
-                    event.subject.sendMessage("第一个字母是${session.answer.word[0]}")
-                    if (session.answer.word.trim().contains(" ")) {
+                    val hint = maxOf(++session.hintTimes, session.answer.word.length)
+                    event.subject.sendMessage("第${hint}个字母是${session.answer.word[hint]}")
+                    if (session.answer.word.trim().contains(" ") && hint == 1) {
                         event.subject.sendMessage("而且这是一个短语。")
                     }
                 }

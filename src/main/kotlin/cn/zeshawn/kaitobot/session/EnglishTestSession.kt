@@ -14,7 +14,7 @@ class EnglishTestSession(override val target: SessionTarget, val answer: Word) :
 
     lateinit var usedTime: Duration
     lateinit var lastAnswerTime: LocalDateTime
-
+    var hintTimes = 0
     fun getAttender(id: Long): EnglishTestAttender? {
         users.forEach {
             if (it is EnglishTestAttender && it.id == id) {
@@ -26,7 +26,7 @@ class EnglishTestSession(override val target: SessionTarget, val answer: Word) :
 
     override fun deprecated() {
         runBlocking {
-            target.getTarget().sendMessage("太久没有人作答，英语单词测试结束。")
+            target.getTarget().sendMessage("太久没有人作答，正确答案是${answer}。")
         }
     }
 }
