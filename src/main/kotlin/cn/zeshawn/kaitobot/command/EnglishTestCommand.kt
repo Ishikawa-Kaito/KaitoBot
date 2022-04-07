@@ -119,8 +119,8 @@ object EnglishTestCommand : ChatCommand, ConversationCommand {
                     SessionManager.removeSession(session)
                 }
                 "提示" -> {
-                    val hint = maxOf(++session.hintTimes, session.answer.word.length)
-                    event.subject.sendMessage("第${hint}个字母是${session.answer.word[hint]}")
+                    val hint = minOf(session.hintTimes++, session.answer.word.length)
+                    event.subject.sendMessage("第${hint + 1}个字母是${session.answer.word[hint]}")
                     if (session.answer.word.trim().contains(" ") && hint == 1) {
                         event.subject.sendMessage("而且这是一个短语。")
                     }

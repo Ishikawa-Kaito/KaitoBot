@@ -47,9 +47,9 @@ object CommandManager {
 
     fun getCommandName(message: String): String {
         val cmdPrefix = getCommandPrefix(message)
-        if (cmdPrefix == "") {
-            return message.split(" ")[0]
-        }
+
+        if (cmdPrefix.isEmpty()) return ""
+
         val index = message.indexOf(cmdPrefix) + cmdPrefix.length
         return message.substring(index, message.length).split(" ")[0]
     }
