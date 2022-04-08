@@ -15,14 +15,14 @@ import javax.imageio.ImageIO
  */
 
 object OreoService {
-    val Oimg = ImageIO.read(File("./data/Oreo/O.png"))
-    val Obimg = ImageIO.read(File("./data/Oreo/Ob.png"))
-    val Rimg = ImageIO.read(File("./data/Oreo/R.png"))
-    val layerMap = mapOf("O" to Oimg, "Ob" to Obimg, "R" to Rimg)
+    private val Oimg = ImageIO.read(File("./data/Oreo/O.png")).getScaledInstance(240, 160, Image.SCALE_SMOOTH)
+    private val Obimg = ImageIO.read(File("./data/Oreo/Ob.png")).getScaledInstance(240, 160, Image.SCALE_SMOOTH)
+    private val Rimg = ImageIO.read(File("./data/Oreo/R.png")).getScaledInstance(220, 155, Image.SCALE_SMOOTH)
+    private val layerMap = mapOf("O" to Oimg, "Ob" to Obimg, "R" to Rimg)
 
     fun generateOreo(oreoString: String): InputStream? {
         if (oreoString.isEmpty()) return null
-        val oreoStr = if (oreoString.length > 50) oreoString.substring(50) else oreoString
+        val oreoStr = if (oreoString.length > 100) oreoString.substring(0, 100) else oreoString
         val oreoArr = mutableListOf<String>()
         val drawArr = mutableListOf<DrawItem>()
         for (layer in oreoStr.chunked(1)) {
@@ -32,8 +32,10 @@ object OreoService {
                 "与", "和" -> if (oreoArr.isNotEmpty() && oreoArr.last() != "-") "-" else ""
                 else -> ""
             }
-            oreoArr.add(layerToAdd)
+            if (layerToAdd.isNotEmpty())
+                oreoArr.add(layerToAdd)
         }
+        if (oreoArr.isEmpty()) return null
         if (oreoArr.last() == "-") oreoArr.removeLast()
         var height = 0
         for (layer in oreoArr) {
@@ -57,7 +59,7 @@ object OreoService {
         val g2d = image.createGraphics()
         drawArr.reversed().forEach {
             g2d.drawImage(
-                layerMap[it.type]!!.getScaledInstance(it.width, it.height, Image.SCALE_SMOOTH),
+                layerMap[it.type],
                 it.x,
                 it.y,
                 it.width,
