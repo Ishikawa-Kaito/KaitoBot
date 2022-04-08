@@ -1,6 +1,7 @@
 package cn.zeshawn.kaitobot.service
 
 import cn.hutool.http.HttpUtil
+import cn.zeshawn.kaitobot.data.AntiMotivationalQuotes
 import cn.zeshawn.kaitobot.data.CPStories
 
 /**
@@ -19,5 +20,9 @@ object ShadiaoService {
 
     fun getCPStory(top: String, bottom: String): String {
         return CPStories.stories.toList().random().asText().replace("<攻>", top).replace("<受>", bottom)
+    }
+
+    fun getAntiMotivationalQuote(): String {
+        return AntiMotivationalQuotes.quotes.toList().random().asText()
     }
 }
