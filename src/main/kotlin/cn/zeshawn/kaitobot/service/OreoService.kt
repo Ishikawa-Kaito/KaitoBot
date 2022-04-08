@@ -20,8 +20,9 @@ object OreoService {
     val Rimg = ImageIO.read(File("./data/Oreo/R.png"))
     val layerMap = mapOf("O" to Oimg, "Ob" to Obimg, "R" to Rimg)
 
-    fun generateOreo(oreoStr: String): InputStream? {
-        if (oreoStr.isEmpty()) return null
+    fun generateOreo(oreoString: String): InputStream? {
+        if (oreoString.isEmpty()) return null
+        val oreoStr = if (oreoString.length > 50) oreoString.substring(50) else oreoString
         val oreoArr = mutableListOf<String>()
         val drawArr = mutableListOf<DrawItem>()
         for (layer in oreoStr.chunked(1)) {

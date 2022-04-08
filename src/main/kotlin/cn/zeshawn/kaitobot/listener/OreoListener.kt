@@ -13,7 +13,7 @@ object OreoListener : IListener {
 
     @EventHandler
     fun generateOreo(event: MessageEvent) {
-        val reg = "[奥[利和]与]*".toRegex()
+        val reg = "[奥利[与和]]*".toRegex()
         val msg = event.message.contentToString()
         if (reg.matches(msg)) {
             val imageStream = OreoService.generateOreo(msg) ?: return
