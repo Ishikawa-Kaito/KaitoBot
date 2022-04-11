@@ -57,10 +57,16 @@ dependencies {
 
     implementation("com.kennycason:kumo-core:1.28")
     implementation("com.kennycason:kumo-tokenizers:1.28")
+
     implementation("com.huaban:jieba-analysis:1.0.2")
 
     // 汉字转拼音
     implementation("com.belerweb:pinyin4j:2.5.1")
+
+    // ocr
+    implementation("net.sourceforge.tess4j:tess4j:5.2.0")
+
+    implementation("org.bytedeco:javacv-platform:1.5.7")
 
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
