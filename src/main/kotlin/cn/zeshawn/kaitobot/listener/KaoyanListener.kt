@@ -1,6 +1,5 @@
 package cn.zeshawn.kaitobot.listener
 
-import cn.hutool.core.date.LocalDateTimeUtil
 import cn.zeshawn.kaitobot.listener.base.EventHandler
 import cn.zeshawn.kaitobot.listener.base.IListener
 import kotlinx.coroutines.runBlocking
@@ -9,7 +8,6 @@ import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.buildMessageChain
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 object KaoyanListener : IListener {
     override val name: String
@@ -17,25 +15,25 @@ object KaoyanListener : IListener {
 
     private val remindList = listOf(807664723L)
     private var lastTalk = mutableMapOf(0L to 0L)
-    private val kaoyanDate = LocalDate.parse("2022-12-24")
+    private val kaoyanDate = LocalDate.parse("2023-12-24")
 
     @EventHandler
     fun remindYou(event: GroupMessageEvent) {
         val id = event.sender.id
         if (id in remindList) {
-            if (!lastTalk.containsKey(id)) {
-                lastTalk[id] = 0
+            val last = if (!lastTalk.containsKey(id)) {
+                lastTalk[id] = Instant.now().epochSecond
+                0
+            }else {
+                lastTalk[id]!!
             }
-            val last = lastTalk[id]!!
             if (anotherDay(Instant.now().epochSecond, last)) {
                 lastTalk[id] = Instant.now().epochSecond
                 runBlocking {
                     event.subject.sendMessage(
                         buildMessageChain {
                             +At(id)
-                            +"\n距离2023年考研还有${
-                                LocalDateTimeUtil.between(LocalDateTime.now(), kaoyanDate.atTime(0, 0)).toDays()
-                            }天"
+                            +"这是你今天第一次说话，距离2023年考研还有${LocalDate.now().until(kaoyanDate).days}天"
                         }
                     )
                 }
