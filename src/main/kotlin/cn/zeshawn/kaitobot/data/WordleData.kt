@@ -8,7 +8,7 @@ import javax.imageio.ImageIO
 
 object WordleData: DataFileBase(KaitoMind.root.resolve("data/wordle"))  {
     val charData:MutableMap<BufferedImage,Pair<String,Int>> = mutableMapOf()
-
+    val words = mutableSetOf<String>()
     override fun load() {
         if (file.exists() && file.isDirectory){
             file.listFiles()!!.forEach {
@@ -16,6 +16,11 @@ object WordleData: DataFileBase(KaitoMind.root.resolve("data/wordle"))  {
                     ImageIO.read(it).let { image ->
                         val charMeta = it.name.chunked(1)
                         charData[image] = Pair(charMeta[0],charMeta[1].toInt())
+                    }
+                }
+                if (it.extension.lowercase() == "txt"){
+                    it.readLines().forEach { word ->
+                        words.add(word)
                     }
                 }
             }

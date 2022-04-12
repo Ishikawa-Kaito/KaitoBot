@@ -1,8 +1,6 @@
 package cn.zeshawn.kaitobot.service
 
 import cn.zeshawn.kaitobot.data.WordleData
-import java.awt.RenderingHints
-import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
@@ -24,7 +22,7 @@ object WordleService {
         }
     }
 
-    fun getRows(respondImage: BufferedImage): MutableList<List<BufferedImage>>{
+    private fun getRows(respondImage: BufferedImage): MutableList<List<BufferedImage>>{
         val rows = mutableListOf<List<BufferedImage>>()
         val lines = buildList {
             for (i in 20..310 step 50) {
@@ -44,7 +42,7 @@ object WordleService {
         return rows
     }
 
-    fun solve(respondImage: BufferedImage){
+    fun solve(respondImage: BufferedImage):String{
         val rows = getRows(respondImage)
         rows.forEach {
             it.forEach { mat ->
@@ -54,11 +52,13 @@ object WordleService {
 
     }
 
-    fun compareByte(imgA:BufferedImage,imgB:BufferedImage):Boolean{
+    private fun compareByte(imgA:BufferedImage, imgB:BufferedImage):Boolean{
+        var diff = 0
         for (i in 0 until imgA.width) {
             for (j in 0 until imgA.height) {
                 if (imgA.getRGB(i,j)!=imgB.getRGB(i,j))
-                    return false
+                    diff++
+                if (diff > 10) return false
             }
         }
         return true
@@ -82,91 +82,139 @@ object WordleService {
     }
 
 
-    fun reduceSize(image: BufferedImage, width: Int, height: Int): BufferedImage {
-        var new_image: BufferedImage? = null
-        val width_times = width.toDouble() / image.width
-        val height_times = height.toDouble() / image.height
-        new_image = if (image.type == BufferedImage.TYPE_CUSTOM) {
-            val cm = image.colorModel
-            val raster = cm.createCompatibleWritableRaster(width, height)
-            val alphaPremultiplied = cm.isAlphaPremultiplied
-            BufferedImage(cm, raster, alphaPremultiplied, null)
-        } else {
-            BufferedImage(width, height, image.type)
-        }
-        val g = new_image.createGraphics()
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
-        g.drawRenderedImage(image, AffineTransform.getScaleInstance(width_times, height_times))
-        g.dispose()
-        return new_image
+}
+
+
+class WordleSolver{
+
+    private val wrongLetters = mutableSetOf<String>() // grey letters
+    private val untriedLetters = mutableSetOf<String>() // untried letters
+    private val candidateWords = mutableSetOf<String>() // possible words
+    private val usedWords = mutableSetOf<String>() // tried words
+
+    private val greenLetters = mutableSetOf<Pair<String,Int>>() // green letters and position
+    private val yellowLetters = mutableSetOf<Pair<String,Int>>() // yellow letters and position
+
+    var round = 0 // which round now
+
+    init {
+        reset()
     }
 
-    /**
-     * 得到灰度值
-     * @param image
-     * @return
-     */
-    fun getGrayValue(image: BufferedImage): Array<DoubleArray> {
-        val width = image.width
-        val height = image.height
-        val pixels = Array(width) { DoubleArray(height) }
-        for (i in 0 until width) {
-            for (j in 0 until height) {
-                pixels[i][j] = computeGrayValue(image.getRGB(i, j))
-            }
-        }
-        return pixels
+    fun reset(){
+        wrongLetters.clear()
+        untriedLetters.clear()
+        candidateWords.clear()
+        usedWords.clear()
+        round = 0
     }
 
-    /**
-     * 计算灰度值
-     * @param pixels
-     * @return
-     */
-    fun computeGrayValue(pixel: Int): Double {
-        val red = pixel shr 16 and 0xFF
-        val green = pixel shr 8 and 0xFF
-        val blue = pixel and 255
-        return 0.3 * red + 0.59 * green + 0.11 * blue
-    }
 
-    fun avgImage(smallImage: Array<IntArray>): Int {
-        var avg = -1
-        var sum = 0
-        var count = 0
-        for (i in smallImage.indices) {
-            for (j in smallImage[i].indices) {
-                sum += smallImage[i][j]
-                count++
-            }
-        }
-        avg = sum / count
-        return avg
-    }
-
-    fun to64(avg: Int, smallImage: Array<IntArray>): String? {
-        var result = ""
-        for (i in smallImage.indices) {
-            for (j in smallImage[i].indices) {
-                result += if (smallImage[i][j] > avg) {
-                    "1"
-                } else {
-                    "0"
+    private fun getLetterCounter(valid:Boolean,words:MutableSet<String>):Map<String,Int>{
+        val probabilities = mutableMapOf<String,Int>()
+        words.forEach {
+            it.forEach { char ->
+                val letter = char.toString()
+                if (valid || letter in untriedLetters){
+                    if (probabilities.contains(letter)){
+                        probabilities[letter] = probabilities[letter]!!.plus(1)
+                    }else{
+                        probabilities[letter] = 1
+                    }
                 }
             }
         }
-        return result
+        return probabilities
     }
 
-    //越小越相似
-    fun compareFingerPrint(orgin_fingerprint: String, compared_fingerprint: String): Int {
-        var count = 0
-        for (i in 0 until orgin_fingerprint.length) {
-            if (orgin_fingerprint[i] != compared_fingerprint[i]) {
-                count++
+
+    /**
+     * 获得所有字母的词频
+     */
+    fun getLetterFreq(words: MutableSet<String>):Map<String,Int>{
+        return getLetterCounter(true,words)
+    }
+
+    /**
+     * 获得有可能的字母的词频
+     */
+    fun getLetterProbe(words: MutableSet<String>):Map<String,Int>{
+        return getLetterCounter(false,words)
+    }
+
+    fun isWordForbidden(word:String):Boolean{
+        return word.any { it.toString() in wrongLetters }
+    }
+
+    fun matchGreen(word: String):Boolean{
+        return greenLetters.all {
+            it.first == word[it.second].toString()
+        }
+    }
+
+    fun matchYellow(word: String):Boolean{
+        return yellowLetters.all {
+            it.first != word[it.second].toString() && it.first in word
+        }
+    }
+
+    fun getNextCandidateWords(){
+        val removal = mutableSetOf<String>()
+        candidateWords.forEach {
+            if (isWordForbidden(it) || !matchGreen(it) || !matchYellow(it)){
+                removal.add(it)
             }
         }
-        return count
+        candidateWords.removeAll(removal)
+    }
+
+    fun guess():String{
+        val probes = getLetterProbe(candidateWords)
+        val freq = getLetterFreq(candidateWords)
+        if (untriedLetters.size >1 && round < 6){
+            val wordScore = mutableListOf<Triple<String,Int,Int>>()
+            val wordList = WordleData.words
+            wordList.forEach { word ->
+                val letters = word.chunked(1).toSet()
+                val untriedScore = letters.sumOf {
+                     if (probes.contains(it)) probes[it]!! else 0
+                }
+                val freqScore = letters.sumOf {
+                    freq[it]!!
+                }
+                wordScore.add(Triple(word,untriedScore,freqScore))
+
+            }
+            return wordScore.sortedWith(compareBy({-it.second},{-it.third},{it.first}))[0].first
+        }
+        else{
+            return candidateWords.sortedWith(
+                compareBy(
+                    {-it.chunked(1).toSet().size},
+                    {-it.sumOf {
+                            letter -> freq[letter.toString()]!!
+                        }
+                    }
+
+                )
+            )[0]
+        }
+    }
+
+    fun pickUpAWord():String{
+        getNextCandidateWords()
+        println("left ${candidateWords.size} words")
+
+        if (candidateWords.isEmpty()) {
+            println("黔驴技穷")
+            return ""
+        }
+        else if (candidateWords.size == 1){
+            return candidateWords.first()
+        }
+
+        return guess()
+
     }
 
 }

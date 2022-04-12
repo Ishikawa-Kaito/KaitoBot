@@ -10,7 +10,7 @@ internal class WordleServiceTest {
 
     @Test
     fun getWords() {
-        val image = ImageIO.read(File("F:\\wordle_test\\5.png"))
+        val image = ImageIO.read(File("C:\\Users\\63086\\Desktop\\wordle\\5.png"))
         WordleService.solve(image)
     }
 }
