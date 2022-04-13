@@ -15,7 +15,7 @@ object WordleData: DataFileBase(KaitoMind.root.resolve("data/wordle"))  {
                 if (it.extension.lowercase() == "png") {
                     ImageIO.read(it).let { image ->
                         val charMeta = it.name.chunked(1)
-                        charData[image] = Pair(charMeta[0],charMeta[1].toInt())
+                        charData[image] = Pair(charMeta[0].lowercase(),charMeta[1].toInt())
                     }
                 }
                 if (it.extension.lowercase() == "txt"){

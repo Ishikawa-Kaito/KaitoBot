@@ -1,5 +1,6 @@
 package cn.zeshawn.kaitobot.service
 
+import cn.zeshawn.kaitobot.data.WordData
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -10,7 +11,11 @@ internal class WordleServiceTest {
 
     @Test
     fun getWords() {
-        val image = ImageIO.read(File("C:\\Users\\63086\\Desktop\\wordle\\5.png"))
-        WordleService.solve(image)
+        WordData.load()
+        val words = WordData.getWordsByLength(10)
+        words.forEach {
+            println(it)
+        }
     }
+
 }
