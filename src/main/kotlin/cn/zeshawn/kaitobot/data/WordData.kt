@@ -2,6 +2,7 @@ package cn.zeshawn.kaitobot.data
 
 import cn.zeshawn.kaitobot.KaitoMind
 import cn.zeshawn.kaitobot.data.base.DataFileBase
+import cn.zeshawn.kaitobot.util.isAlphabet
 import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.DaoManager
 import com.j256.ormlite.field.DatabaseField
@@ -33,6 +34,15 @@ object WordData : DataFileBase(File("${KaitoMind.root}/data", "WordData.db")) {
         val bookId = rank.rank
         val words = dao.queryForEq("bookId", bookId)
         return words.random()
+    }
+
+    fun getWordsByLength(length: Int): MutableSet<String> {
+        return buildSet {
+            dao.queryRaw("SELECT word FROM word_dict WHERE LENGTH(word)=$length").results.forEach {
+                if (it[0].isAlphabet())
+                    add(it[0].lowercase())
+            }
+        }.toMutableSet()
     }
 
 }

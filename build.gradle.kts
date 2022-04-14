@@ -57,10 +57,12 @@ dependencies {
 
     implementation("com.kennycason:kumo-core:1.28")
     implementation("com.kennycason:kumo-tokenizers:1.28")
+
     implementation("com.huaban:jieba-analysis:1.0.2")
 
     // 汉字转拼音
     implementation("com.belerweb:pinyin4j:2.5.1")
+
 
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
