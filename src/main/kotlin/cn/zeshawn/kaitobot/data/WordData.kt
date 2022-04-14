@@ -7,7 +7,6 @@ import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.DaoManager
 import com.j256.ormlite.field.DatabaseField
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource
-import com.j256.ormlite.stmt.QueryBuilder
 import com.j256.ormlite.table.DatabaseTable
 import java.io.File
 
@@ -37,11 +36,11 @@ object WordData : DataFileBase(File("${KaitoMind.root}/data", "WordData.db")) {
         return words.random()
     }
 
-    fun getWordsByLength(length:Int):MutableSet<String>{
+    fun getWordsByLength(length: Int): MutableSet<String> {
         return buildSet {
             dao.queryRaw("SELECT word FROM word_dict WHERE LENGTH(word)=$length").results.forEach {
                 if (it[0].isAlphabet())
-                    add(it[0])
+                    add(it[0].lowercase())
             }
         }.toMutableSet()
     }
