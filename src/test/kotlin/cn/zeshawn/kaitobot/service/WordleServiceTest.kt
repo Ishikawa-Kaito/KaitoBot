@@ -18,8 +18,17 @@ internal class WordleServiceTest {
 
     @Test
     fun getRows(){
-        val img = ImageIO.read(File("F:\\Project\\pythonProject2\\raw_data\\1.png"))
-        WordleService.getRows(img)
+        val img = ImageIO.read(File("C:\\Users\\63086\\Desktop\\pythonproject2\\raw_data\\1.png"))
+        val rows = WordleService.getRows(img)
+        println()
+    }
+
+    @Test
+    fun solve(){
+        WordData.load()
+        val img = ImageIO.read(File("C:\\Users\\63086\\Desktop\\wordle\\321.png"))
+        val result = WordleService.solve(img)
+        println()
     }
 
 }

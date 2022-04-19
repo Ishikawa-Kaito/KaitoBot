@@ -63,6 +63,7 @@ dependencies {
     // 汉字转拼音
     implementation("com.belerweb:pinyin4j:2.5.1")
 
+    implementation("com.microsoft.onnxruntime:onnxruntime:1.11.0")
 
     implementation("org.bytedeco:javacv-platform:1.5.7")
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-api:0.4.0-alpha-3")
