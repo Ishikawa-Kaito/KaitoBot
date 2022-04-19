@@ -9,8 +9,25 @@ import kotlinx.coroutines.withContext
 import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain
+import org.bytedeco.javacv.Java2DFrameConverter
+import org.bytedeco.javacv.Java2DFrameUtils
+import org.bytedeco.javacv.OpenCVFrameConverter.ToMat
+import org.bytedeco.opencv.global.opencv_core
+import org.bytedeco.opencv.global.opencv_core.CV_32SC4
+import org.bytedeco.opencv.global.opencv_imgproc
+import org.bytedeco.opencv.global.opencv_imgproc.*
+import org.bytedeco.opencv.opencv_core.Mat
+import org.bytedeco.opencv.opencv_core.MatVector
+import org.bytedeco.opencv.opencv_core.Scalar
+import org.bytedeco.opencv.opencv_core.Size
+import org.jetbrains.kotlinx.dl.api.inference.onnx.OnnxInferenceModel
+import org.jetbrains.kotlinx.dl.dataset.image.ColorMode
+import org.jetbrains.kotlinx.dl.dataset.image.ImageConverter
+import org.jetbrains.kotlinx.dl.dataset.preprocessor.Preprocessing
+import org.jetbrains.kotlinx.dl.dataset.preprocessor.Preprocessor
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
+import java.io.File
 import javax.imageio.ImageIO
 
 
@@ -20,24 +37,66 @@ object WordleService {
         WordleData.load()
     }
 
-    private fun getRows(respondImage: BufferedImage): MutableList<List<Pair<String, Int>>> {
-        val rows = mutableListOf<List<Pair<String, Int>>>()
-        val lines = buildList {
-            for (i in 20..respondImage.height - 20 step 50) {
-                val tempImg = respondImage.getSubimage(20, i, respondImage.width - 40, 40)
-                add(tempImg)
-            }
-        }
-        lines.forEach {
-            val words = buildList {
-                for (i in 0..it.width step 50) {
-                    val word = it.getSubimage(i, 0, 40, 40)
-                    add(ocr(word))
+    var classes = lazy {
+        buildList {
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ".forEach {
+                for (i in 0 until 3){
+                    add("${it}_${i}")
                 }
             }
-            rows.add(words)
         }
-        return rows
+    }
+
+
+
+    fun getRows(respondImage: BufferedImage): MutableList<List<Pair<String, Int>>> {
+//        val rows = mutableListOf<List<Pair<String, Int>>>()
+//        val lines = buildList {
+//            for (i in 20..respondImage.height - 20 step 50) {
+//                val tempImg = respondImage.getSubimage(20, i, respondImage.width - 40, 40)
+//                add(tempImg)
+//            }
+//        }
+//        lines.forEach {
+//            val words = buildList {
+//                for (i in 0..it.width step 50) {
+//                    val word = it.getSubimage(i, 0, 40, 40)
+//                    add(ocr(word))
+//                }
+//            }
+//            rows.add(words)
+//        }
+//        return rows
+        val img = respondImage.toMat()
+        val grey = Mat()
+        cvtColor(img,grey, COLOR_RGB2GRAY)
+        val mask = Mat()
+        opencv_core.inRange(
+            img,
+            Mat(1, 1, CV_32SC4, Scalar(118.0, 118.0, 119.0, 0.0)),
+            Mat(1, 1, CV_32SC4, Scalar(128.0, 128.0, 129.0, 0.0)),
+            mask
+        )
+        val cnt = MatVector()
+        val hier = Mat()
+        findContours(mask,cnt,hier,RETR_EXTERNAL,CHAIN_APPROX_SIMPLE)
+        val images = buildList<BufferedImage> {
+            for (i in 0 until cnt.size()){
+                val rect = boundingRect(cnt[i])
+                val roi = Mat(grey,rect)
+                val resized = Mat()
+                resize(roi,resized, Size(40,40),0.0,0.0, INTER_LINEAR)
+                val image =
+                    Java2DFrameUtils.deepCopy(Java2DFrameConverter().getBufferedImage(ToMat().convert(resized).clone()))
+
+                add(image)
+            }
+        }
+        images.reversed().forEach {
+            ImageIO.write(it,"jpg", File("1.jpg"))
+            println()
+        }
+        return mutableListOf()
     }
 
     private fun getRound(rows: MutableList<List<Pair<String, Int>>>): Int {
@@ -88,6 +147,14 @@ object WordleService {
         return Pair("", 0)
     }
 
+
+    fun predict(cell:BufferedImage){
+        OnnxInferenceModel.load("KaitoWordleOcr v1.0.onnx").use {
+            val input = ImageConverter.toRawFloatArray(cell,ColorMode.GRAYSCALE)
+            val out = it.predict(input)
+            println(classes.value[out])
+        }
+    }
 
     fun BufferedImage.toByteArray(): ByteArray {
         val out = ByteArrayOutputStream()
@@ -282,4 +349,10 @@ class WordleSolver {
         return lastAttempt
     }
 
+}
+
+
+
+fun BufferedImage.toMat():Mat {
+    return ToMat().convertToMat(Java2DFrameConverter().convert(this)).clone()
 }

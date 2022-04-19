@@ -2,6 +2,8 @@ package cn.zeshawn.kaitobot.service
 
 import cn.zeshawn.kaitobot.data.WordData
 import org.junit.jupiter.api.Test
+import java.io.File
+import javax.imageio.ImageIO
 
 internal class WordleServiceTest {
 
@@ -12,6 +14,12 @@ internal class WordleServiceTest {
         words.forEach {
             println(it)
         }
+    }
+
+    @Test
+    fun getRows(){
+        val img = ImageIO.read(File("F:\\Project\\pythonProject2\\raw_data\\1.png"))
+        WordleService.getRows(img)
     }
 
 }

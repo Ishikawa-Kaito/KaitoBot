@@ -64,6 +64,11 @@ dependencies {
     implementation("com.belerweb:pinyin4j:2.5.1")
 
 
+    implementation("org.bytedeco:javacv-platform:1.5.7")
+    implementation("org.jetbrains.kotlinx:kotlin-deeplearning-api:0.4.0-alpha-3")
+    implementation("org.jetbrains.kotlinx:kotlin-deeplearning-onnx:0.4.0-alpha-3")
+    implementation("org.jetbrains.kotlinx:kotlin-deeplearning-dataset:0.4.0-alpha-3")
+
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 
