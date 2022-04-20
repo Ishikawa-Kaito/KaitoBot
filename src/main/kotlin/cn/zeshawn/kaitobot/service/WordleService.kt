@@ -12,41 +12,36 @@ import kotlinx.coroutines.withContext
 import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain
-import org.bytedeco.javacpp.DoublePointer
-import org.bytedeco.javacpp.indexer.DoubleRawIndexer
 import org.bytedeco.javacv.Java2DFrameConverter
 import org.bytedeco.javacv.Java2DFrameUtils
 import org.bytedeco.javacv.OpenCVFrameConverter.ToMat
-import org.bytedeco.opencv.global.opencv_core
-import org.bytedeco.opencv.global.opencv_core.*
+import org.bytedeco.opencv.global.opencv_core.meanStdDev
 import org.bytedeco.opencv.global.opencv_imgproc.*
 import org.bytedeco.opencv.opencv_core.Mat
 import org.bytedeco.opencv.opencv_core.MatVector
-import org.bytedeco.opencv.opencv_core.Scalar
 import org.bytedeco.opencv.opencv_core.Size
 import org.jetbrains.kotlinx.dl.api.extension.argmax
-import org.jetbrains.kotlinx.dl.api.inference.onnx.OnnxInferenceModel
-import org.jetbrains.kotlinx.dl.dataset.image.ImageConverter
 import java.awt.image.BufferedImage
 import java.awt.image.PixelGrabber
-import java.io.ByteArrayOutputStream
-import java.io.File
 import java.nio.DoubleBuffer
-import java.nio.FloatBuffer
 import javax.imageio.ImageIO
 import kotlin.math.roundToInt
 
 
 object WordleService {
 
+    private val env: OrtEnvironment = OrtEnvironment.getEnvironment()
+    private val session: OrtSession =
+        env.createSession(".\\data\\KaitoWordleOcr v1.1.onnx", OrtSession.SessionOptions())
+
     init {
         WordleData.load()
     }
 
-    var classes = lazy {
+    private var classes = lazy {
         buildList {
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ".forEach {
-                for (i in 0 until 3){
+                for (i in 0 until 3) {
                     add("${it}_${i}")
                 }
             }
@@ -54,53 +49,64 @@ object WordleService {
     }
 
 
-
     fun getRows(respondImage: BufferedImage): MutableList<List<Pair<String, Int>>> {
+        // cv read
         val img = respondImage.toMat()
-        val mask = Mat()
-        inRange(
-            img,
-            Mat(1, 1, CV_32SC4, Scalar(110.0, 80.0, 80.0, 0.0)),
-            Mat(1, 1, CV_32SC4, Scalar(250.0, 128.0, 129.0, 0.0)),
-            mask
-        )
+        // to grey then to binary
+        val imgGrey = Mat()
+        cvtColor(img, imgGrey, COLOR_RGB2GRAY)
+        val binaryImg = Mat()
+        threshold(imgGrey, binaryImg, 200.0, 255.0, THRESH_BINARY_INV)
+
+        // find contours from binary img
         val cnt = MatVector()
-        val hier = Mat()
-        findContours(mask,cnt,hier,RETR_EXTERNAL,CHAIN_APPROX_SIMPLE)
+        val hierarchy = Mat()
+        // only outer contours will be added (eliminate letter contours distractions)
+        findContours(binaryImg, cnt, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
+
+        // general solution of binary linear equation: x * (x+1) = contours
         val length = ((-1 + kotlin.math.sqrt((1 + 4 * cnt.size()).toDouble())) / 2).roundToInt()
-        val images = buildList<BufferedImage> {
-            for (i in 0 until cnt.size()){
+
+        // get every letter cell by its contours
+        val images = buildList {
+            for (i in 0 until cnt.size()) {
                 val rect = boundingRect(cnt[i])
-                val roi = Mat(img,rect)
+                val roi = Mat(img, rect)
                 val resized = Mat()
-                resize(roi,resized, Size(40,40),0.0,0.0, INTER_LINEAR)
+                // resize for cnn input
+                resize(roi, resized, Size(40, 40), 0.0, 0.0, INTER_LINEAR)
+
+                // calculates std and mean to ignore blank cells
                 val grey = Mat()
-                cvtColor(resized,grey, COLOR_RGB2GRAY)
+                cvtColor(resized, grey, COLOR_RGB2GRAY)
                 val mean = Mat()
                 val stdd = Mat()
-                meanStdDev(grey,mean,stdd)
+                meanStdDev(grey, mean, stdd)
                 val stds = stdd.createBuffer<DoubleBuffer>().get(0)
                 val means = mean.createBuffer<DoubleBuffer>().get(0)
                 if (stds + means > 200)
                     continue
-                val image = Java2DFrameUtils.deepCopy(Java2DFrameConverter().getBufferedImage(ToMat().convert(resized).clone()))
+
+                val image = resized.toBufferedImage()
                 add(image)
             }
         }
         val rows = mutableListOf<List<Pair<String, Int>>>()
         val letters = images.reversed()
-        for (i in 0 until length + 1){
+        for (i in 0 until length + 1) { // row
             val row = buildList {
-                for (j in 0 until length){
+                for (j in 0 until length) { // col
                     val letterIndex = i * length + j
-                    if (letterIndex < letters.size){
+                    if (letterIndex < letters.size) { // current cell is letter
+                        // the cnn output class is {ch}_{status}
+                        // status: 0-yellow 1-green 2-wrong
                         val label = predict(letters[letterIndex]).split("_")
                         val letter = label[0]
                         val status = label[1].toInt()
-                        val ch = Pair(letter,status)
+                        val ch = Pair(letter, status)
                         add(ch)
-                    }else{
-                        add(Pair("",0))
+                    } else {// current cell is blank
+                        add(Pair("", 0))
                     }
                 }
             }
@@ -123,25 +129,13 @@ object WordleService {
         return solve(respondImage)
     }
 
-    fun solve(respondImage: BufferedImage):String{
+    fun solve(respondImage: BufferedImage): String {
         val rows = getRows(respondImage)
         val length = getLength(rows)
         val round = getRound(rows)
         return WordleSolver().nextRound(rows, round, length)
     }
 
-    private fun compareByte(imgA: BufferedImage, imgB: BufferedImage): Boolean {
-        var diff = 0
-        for (i in 0 until imgA.width) {
-            for (j in 0 until imgA.height) {
-                if (imgA.getRGB(i, j) != imgB.getRGB(i, j))
-                    diff++
-                if (diff > 10) return false
-            }
-        }
-
-        return true
-    }
 
     private fun isWorldeImage(img: Image): Boolean {
         if (img.isEmoji) return false
@@ -152,40 +146,22 @@ object WordleService {
         return true
     }
 
-    private fun ocr(img: BufferedImage): Pair<String, Int> {
-        WordleData.charData.keys.forEach {
-            if (compareByte(it, img)) {
-                return WordleData.charData[it]!!
-            }
-        }
-        return Pair("", 0)
-    }
-
-
-    fun predict(cell:BufferedImage):String{
-        val env = OrtEnvironment.getEnvironment()
-        val session = env.createSession("C:\\Users\\63086\\IdeaProjects\\KaitoBot\\data\\KaitoWordleOcr v1.1.onnx", OrtSession.SessionOptions())
+    private fun predict(cell: BufferedImage): String {
         val features = imageToMatrix(cell)
-        val t1 = OnnxTensor.createTensor(env, features)
-        val inputs = mapOf<String, OnnxTensor>("input" to t1)
+        val tensor = OnnxTensor.createTensor(env, features)
+        val inputs = mapOf<String, OnnxTensor>("input" to tensor)
         val result = session.run(inputs, setOf("output"))[0].value as Array<*>
         val pred = result.first() as FloatArray
         val index = pred.argmax()
         return classes.value[index]
     }
 
-    fun BufferedImage.toByteArray(): ByteArray {
-        val out = ByteArrayOutputStream()
-        ImageIO.write(this, "PNG", out)
-        return out.toByteArray()
-    }
-
-
     private fun getLength(rows: MutableList<List<Pair<String, Int>>>): Int {
-        return rows.size -1
+        return rows.size - 1
     }
 
 
+    // to convert BufferedImage to float[][][][] as to fit shape(1,3,40,40)
     private fun imageToMatrix(image: BufferedImage): Array<Array<Array<FloatArray>>> {
         val width = image.width
         val height = image.height
@@ -221,7 +197,6 @@ object WordleService {
     }
 
 
-
 }
 
 
@@ -236,14 +211,14 @@ class WordleSolver {
 
     private val allWords = mutableSetOf<String>()
 
-    var round = 0 // which round now
-    var lastAttempt = ""  // 有记录的尝试
+    private var round = 0 // which round now
+    private var lastAttempt = ""  // 有记录的尝试
 
     init {
         reset()
     }
 
-    fun reset() {
+    private fun reset() {
         wrongLetters.clear()
         untriedLetters.addAll("ABCDEFGHIJKLMNOPQRSTUVWXYZ".lowercase().chunked(1))
         candidateWords.clear()
@@ -300,7 +275,7 @@ class WordleSolver {
         }
     }
 
-    private fun getNextCandidateWords(length: Int) {
+    private fun getNextCandidateWords() {
         val removal = mutableSetOf<String>()
 
         candidateWords.addAll(allWords)
@@ -344,8 +319,8 @@ class WordleSolver {
         }
     }
 
-    private fun pickUpAWord(length: Int): String {
-        getNextCandidateWords(length)
+    private fun pickUpAWord(): String {
+        getNextCandidateWords()
         println("left ${candidateWords.size} words")
 
         if (candidateWords.isEmpty()) {
@@ -398,7 +373,7 @@ class WordleSolver {
             return "拿下了"
         } else { // 收集green yellow untried
             collectInfos(rows, length)
-            lastAttempt = pickUpAWord(length)
+            lastAttempt = pickUpAWord()
         }
         KaitoMind.KaitoLogger.info("Round: $round Guess: $lastAttempt")
         return lastAttempt
@@ -407,7 +382,11 @@ class WordleSolver {
 }
 
 
-
-fun BufferedImage.toMat():Mat {
+fun BufferedImage.toMat(): Mat {
     return ToMat().convertToMat(Java2DFrameConverter().convert(this)).clone()
+}
+
+
+fun Mat.toBufferedImage(): BufferedImage {
+    return Java2DFrameUtils.deepCopy(Java2DFrameConverter().getBufferedImage(ToMat().convert(this).clone()))
 }
