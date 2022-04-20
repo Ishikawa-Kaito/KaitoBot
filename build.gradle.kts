@@ -65,7 +65,10 @@ dependencies {
 
     implementation("com.microsoft.onnxruntime:onnxruntime:1.11.0")
 
-    implementation("org.bytedeco:javacv-platform:1.5.7")
+    implementation("org.bytedeco:javacv:1.5.7")
+    implementation("org.bytedeco:opencv:4.5.5-1.5.7:windows-x86_64")
+    implementation("org.bytedeco:openblas:0.3.19-1.5.7:windows-x86_64")
+    implementation("org.bytedeco:javacpp:1.5.7:windows-x86_64")
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-api:0.4.0-alpha-3")
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-onnx:0.4.0-alpha-3")
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-dataset:0.4.0-alpha-3")
