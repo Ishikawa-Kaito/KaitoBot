@@ -69,14 +69,24 @@ dependencies {
     implementation("org.bytedeco:opencv:4.5.5-1.5.7:windows-x86_64")
     implementation("org.bytedeco:openblas:0.3.19-1.5.7:windows-x86_64")
     implementation("org.bytedeco:javacpp:1.5.7:windows-x86_64")
+    runtimeOnly("org.bytedeco:opencv:4.5.5-1.5.7:linux-x86_64")
+    runtimeOnly("org.bytedeco:openblas:0.3.19-1.5.7:linux-x86_64")
+    runtimeOnly("org.bytedeco:javacpp:1.5.7:linux-x86_64")
+    implementation(fileTree("libs"))
+
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-api:0.4.0-alpha-3")
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-onnx:0.4.0-alpha-3")
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-dataset:0.4.0-alpha-3")
 
 
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 
 
+}
+
+tasks.shadowJar{
+    exclude("*windows-x86_64*")
 }
 
 tasks.test {

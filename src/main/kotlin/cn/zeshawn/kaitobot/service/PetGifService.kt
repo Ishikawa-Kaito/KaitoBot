@@ -1,14 +1,12 @@
 package cn.zeshawn.kaitobot.service
 
-import cn.hutool.http.HttpUtil
 import cn.zeshawn.kaitobot.util.FileUtil.newFile
+import cn.zeshawn.kaitobot.util.getUrlStream
 import com.squareup.gifencoder.*
 import net.mamoe.mirai.event.events.NudgeEvent
 import java.awt.image.BufferedImage
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 import javax.imageio.ImageIO
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -94,4 +92,3 @@ operator fun <K, V> Map<K, V>.minus(x: K): V {
 }
 
 
-suspend fun String.getUrlStream(): InputStream = ByteArrayInputStream(HttpUtil.downloadBytes(this))

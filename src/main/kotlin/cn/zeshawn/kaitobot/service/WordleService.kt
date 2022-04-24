@@ -32,7 +32,7 @@ object WordleService {
 
     private val env: OrtEnvironment = OrtEnvironment.getEnvironment()
     private val session: OrtSession =
-        env.createSession(".\\data\\KaitoWordleOcr v1.1.onnx", OrtSession.SessionOptions())
+        env.createSession(KaitoMind.root.absolutePath + "/data/model.onnx", OrtSession.SessionOptions())
 
     init {
         WordleData.load()
@@ -139,7 +139,7 @@ object WordleService {
 
     private fun isWorldeImage(img: Image): Boolean {
         if (img.isEmoji) return false
-        if (img.height - img.width > 50) {
+        if (img.height - img.width > 100) {
             return false
         }
 
