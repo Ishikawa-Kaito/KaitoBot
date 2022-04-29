@@ -47,3 +47,12 @@ fun String.isAlphabet(): Boolean {
     val regex = Regex("[a-zA-Z]+?")
     return regex.matches(this)
 }
+
+fun String.getChineseLength(): Int {
+    var length = 0
+    for (i in this.indices) {
+        val ascii = Character.codePointAt(this, i)
+        if (ascii in 0..255) length++ else length += 2
+    }
+    return length
+}

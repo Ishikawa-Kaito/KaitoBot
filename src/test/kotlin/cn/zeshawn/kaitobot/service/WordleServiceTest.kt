@@ -1,11 +1,11 @@
 package cn.zeshawn.kaitobot.service
 
 import cn.zeshawn.kaitobot.data.WordData
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
 import javax.imageio.ImageIO
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 internal class WordleServiceTest {
 

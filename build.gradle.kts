@@ -72,7 +72,6 @@ dependencies {
     runtimeOnly("org.bytedeco:opencv:4.5.5-1.5.7:linux-x86_64")
     runtimeOnly("org.bytedeco:openblas:0.3.19-1.5.7:linux-x86_64")
     runtimeOnly("org.bytedeco:javacpp:1.5.7:linux-x86_64")
-    implementation(fileTree("libs"))
 
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-api:0.4.0-alpha-3")
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-onnx:0.4.0-alpha-3")

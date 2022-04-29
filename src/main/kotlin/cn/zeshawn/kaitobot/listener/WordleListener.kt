@@ -1,7 +1,6 @@
 package cn.zeshawn.kaitobot.listener
 
 import cn.zeshawn.kaitobot.entity.Group
-import cn.zeshawn.kaitobot.listener.base.EventHandler
 import cn.zeshawn.kaitobot.listener.base.IListener
 import cn.zeshawn.kaitobot.service.WordleService
 import kotlinx.coroutines.delay
@@ -14,7 +13,7 @@ object WordleListener : IListener {
         get() = "自动玩wordle"
 
 
-    @EventHandler
+    //@EventHandler
     fun solveWordle(event: GroupMessageEvent) {
         val group = Group.getGroupOrAdd(event.subject.id)
         if (group.params["auto_wordle"] != true) return

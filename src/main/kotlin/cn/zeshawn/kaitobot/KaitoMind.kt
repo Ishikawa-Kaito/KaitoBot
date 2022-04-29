@@ -1,5 +1,6 @@
 package cn.zeshawn.kaitobot
 
+import cn.hutool.core.io.resource.ResourceUtil
 import cn.zeshawn.kaitobot.core.Kaito
 import cn.zeshawn.kaitobot.entity.Config
 import cn.zeshawn.kaitobot.entity.Group
@@ -17,6 +18,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import mu.KotlinLogging
+import java.awt.Font
+import java.awt.Font.TRUETYPE_FONT
 import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -53,6 +56,8 @@ object KaitoMind {
     //一些网易云评论
     internal val music163Comments = mutableListOf<String>()
 
+
+    internal val font = Font.createFont(TRUETYPE_FONT, ResourceUtil.getStream("fonts/TW-Sung-98-1-2.ttf"))
 
     //Jackson mapper
     val mapper: ObjectMapper = ObjectMapper()

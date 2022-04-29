@@ -49,7 +49,7 @@ object BibleData : DataFileBase(File("${KaitoMind.root}/data", "bible.db")) {
 
 @DatabaseTable(tableName = "bible")
 class Bible {
-    @DatabaseField(id = true)
+    @DatabaseField(generatedId = true)
     var id: Int = 0
 
     @DatabaseField

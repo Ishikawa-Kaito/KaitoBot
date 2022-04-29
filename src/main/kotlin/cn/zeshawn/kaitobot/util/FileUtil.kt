@@ -6,9 +6,11 @@ import cn.hutool.core.net.URLDecoder
 import cn.zeshawn.kaitobot.KaitoMind
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import java.awt.image.BufferedImage
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import javax.imageio.ImageIO
 
 @Synchronized
 fun File.getContext(): String {
@@ -68,4 +70,8 @@ object FileUtil {
     }
 }
 
+
+fun BufferedImage.Save(filepath: String) {
+    ImageIO.write(this, "png", File(filepath))
+}
 

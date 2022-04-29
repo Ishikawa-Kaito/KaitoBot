@@ -13,6 +13,7 @@ import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
+import net.mamoe.mirai.utils.MiraiInternalApi
 import java.io.File
 import javax.imageio.ImageIO
 
@@ -22,6 +23,7 @@ object BibleService {
 
     fun getRandomBible(event: GroupMessageEvent) {
         val bible = BibleData.getRandomBibleByGroup(event.subject.id)
+        KaitoMind.KaitoLogger.info("[Bible] from group ${bible.groupId} uploader ${bible.uploaderId} path ${bible.imagePath}")
         val image = ImageIO.read(File(bible.imagePath))
         val stream = image.toInputStream()
         runBlocking {
@@ -41,16 +43,17 @@ object BibleService {
         return false
     }
 
-    suspend fun uploadBible(image: Image, uploaderId: Long, groupId: Long): Boolean {
+    @OptIn(MiraiInternalApi::class)
+    private suspend fun uploadBible(image: Image, uploaderId: Long, groupId: Long): Boolean {
         val stream = image.queryUrl().getUrlStream()
         val bibleImage = ImageIO.read(stream)
         val imageHash = bibleImage.hash()
         if (!BibleData.isBibleExisted(imageHash)) { // 不存在这张图
-            val path = "${savePath}/${imageHash}.png"
+            val path = "${savePath}/img${imageHash}.${image.imageType.formatName}"
             val bible = Bible(0, groupId, uploaderId, imageHash, path)
             if (BibleData.addNewBible(bible)) {
                 withContext(Dispatchers.IO) {
-                    ImageIO.write(bibleImage, "png", File(ensureDir(path)))
+                    ImageIO.write(bibleImage, image.imageType.formatName, File(ensureDir(path)))
                 }
                 return true
             }
