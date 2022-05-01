@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 open class Session(
     open val target: SessionTarget,
     val handler: ChatCommand,
+    open val timeout: Int = 120,
 ) {
     val users: MutableSet<SessionUser> = mutableSetOf()
     val createdTime: LocalDateTime = LocalDateTime.now()

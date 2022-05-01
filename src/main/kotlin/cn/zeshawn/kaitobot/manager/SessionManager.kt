@@ -51,6 +51,7 @@ object SessionManager {
 
     fun hasSessionBySubject(id: Long): Boolean = getSessionsBySubject(id).isNotEmpty()
 
+    @Synchronized
     fun hasSessionBySubject(id: Long, cmd: Class<*>): Boolean {
         return getSessionsBySubject(id).stream().filter { it.handler::class.java == cmd }.count() > 0
     }
@@ -66,9 +67,12 @@ object SessionManager {
             SessionTarget(privateId = e.sender.id)
         }
 
-
-        sessionPool.removeAll { Duration.between(it.lastActiveTime, time).seconds > 120 }  // 清除60s无人应答的会话
-
+        val deprecatedSession =
+            sessionPool.filter { Duration.between(it.lastActiveTime, time).seconds > it.timeout }.toSet()  // 清除超时会话
+        deprecatedSession.forEach {
+            removeSession(it)
+            it.deprecated()
+        }
         val sessionStream = sessionPool.stream()
             .filter { it.target.groupId == target.groupId || it.target.privateId == target.privateId }
 
@@ -105,11 +109,5 @@ object SessionManager {
             .count() > 0
     }
 
-    fun removeDeprecatedSessions() {
-        val time = LocalDateTime.now()
-        val deprecatedSessions = sessionPool.filter { Duration.between(it.lastActiveTime, time).seconds > 120 }
-        deprecatedSessions.forEach { }
-        sessionPool.removeAll(deprecatedSessions.toSet())
-    }
 
 }

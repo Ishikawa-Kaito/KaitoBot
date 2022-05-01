@@ -5,6 +5,7 @@ import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.toMessageChain
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toKotlinDuration
@@ -56,3 +57,10 @@ fun String.getChineseLength(): Int {
     }
     return length
 }
+
+fun String.isChinese(): Boolean {
+    val regEx = "[\\u4e00-\\u9fa5]+"
+    val pattern: Pattern = Pattern.compile(regEx)
+    return pattern.matcher(this).matches()
+}
+

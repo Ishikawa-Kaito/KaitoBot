@@ -22,9 +22,7 @@ object ChatLibraryData : DataFileBase(File(KaitoMind.root, "chatLibrary.json")) 
     }
 }
 
-class MessageChainDeserializer : Deserializers.Base() {
-
-}
+class MessageChainDeserializer : Deserializers.Base()
 
 
 

@@ -57,7 +57,8 @@ object KaitoMind {
     internal val music163Comments = mutableListOf<String>()
 
 
-    internal val font = Font.createFont(TRUETYPE_FONT, ResourceUtil.getStream("fonts/TW-Sung-98-1-2.ttf"))
+    internal val GenYoMinFont = Font.createFont(TRUETYPE_FONT, ResourceUtil.getStream("fonts/GenYoMin-B.ttc"))
+    internal val InconsolataFont = Font.createFont(TRUETYPE_FONT, ResourceUtil.getStream("fonts/Inconsolata-VF.ttf"))
 
     //Jackson mapper
     val mapper: ObjectMapper = ObjectMapper()

@@ -70,7 +70,7 @@ object OreoService {
         g2d.dispose()
         val os = ByteArrayOutputStream()
         ImageIO.write(image, "png", os)
-        return ByteArrayInputStream(os.toByteArray()) as InputStream
+        return ByteArrayInputStream(os.toByteArray())
     }
 
     data class DrawItem(
