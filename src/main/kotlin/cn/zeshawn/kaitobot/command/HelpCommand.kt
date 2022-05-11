@@ -18,7 +18,7 @@ object HelpCommand : ChatCommand {
     override val name: String
         get() = "帮助"
     override val alias: List<String>
-        get() = listOf("help", "?", "？")
+        get() = listOf("h")
     override val permission: UserRole
         get() = UserRole.USER
 
@@ -31,7 +31,7 @@ object HelpCommand : ChatCommand {
                 }.forEach {
                     +PlainText("${i++}.${it.name}\n调用：${it.alias.joinToString(", ")}\n")
                 }
-                +PlainText("输入/? [命令] 可以获得命令的详细帮助。")
+                +PlainText("输入/h [命令] 可以获得命令的详细帮助。")
             }
         } else {
             val arg = args.joinToString("")

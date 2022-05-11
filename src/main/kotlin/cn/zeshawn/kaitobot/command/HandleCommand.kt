@@ -6,6 +6,7 @@ import cn.zeshawn.kaitobot.command.base.ConversationCommand
 import cn.zeshawn.kaitobot.entity.User
 import cn.zeshawn.kaitobot.entity.UserRole
 import cn.zeshawn.kaitobot.manager.SessionManager
+import cn.zeshawn.kaitobot.service.BankService
 import cn.zeshawn.kaitobot.service.HandleGame
 import cn.zeshawn.kaitobot.session.HandleSession
 import cn.zeshawn.kaitobot.session.HandleSessionAttender
@@ -75,9 +76,11 @@ object HandleCommand : ChatCommand, ConversationCommand {
             }
             if (hg.attempt(tryAnswer)) {
                 SessionManager.removeSession(session)
+                val bonus = (7 - hg.triedTimes) * 100L
+                BankService.addDCoin(event.sender.id, bonus)
                 event.subject.sendMessage(buildMessageChain {
                     +At(event.sender)
-                    +PlainText("答对了！")
+                    +PlainText(" 答对了！获得了 $bonus 斗币")
                 })
                 event.subject.sendImage(hg.generateResult().toInputStream())
             } else {

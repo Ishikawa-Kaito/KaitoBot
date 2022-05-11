@@ -7,14 +7,14 @@ import java.util.concurrent.ConcurrentHashMap
 
 data class User(
     val userId: Long,
-    val uuid: UUID,
+    val uuid: String,
     var role: UserRole,
-    val currency: Map<String, Long> = ConcurrentHashMap()
+    val currency: MutableMap<String, Long> = ConcurrentHashMap()
 ) {
     companion object {
         private fun register(id: Long): User {
             KaitoMind.users[id].apply {
-                val register = User(id, UUID.randomUUID(), UserRole.USER)
+                val register = User(id, UUID.randomUUID().toString(true), UserRole.USER)
                 return this ?: register.also { KaitoMind.users.putIfAbsent(id, register) }
             }
         }

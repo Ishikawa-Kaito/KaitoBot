@@ -59,6 +59,7 @@ object KaitoMind {
 
     internal val GenYoMinFont = Font.createFont(TRUETYPE_FONT, ResourceUtil.getStream("fonts/GenYoMin-B.ttc"))
     internal val InconsolataFont = Font.createFont(TRUETYPE_FONT, ResourceUtil.getStream("fonts/Inconsolata-VF.ttf"))
+    internal val Rajdhani = Font.createFont(TRUETYPE_FONT, ResourceUtil.getStream("fonts/rajdhani-semibold.ttf"))
 
     //Jackson mapper
     val mapper: ObjectMapper = ObjectMapper()

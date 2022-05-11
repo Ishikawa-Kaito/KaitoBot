@@ -4,7 +4,6 @@ import cn.zeshawn.kaitobot.KaitoMind
 import cn.zeshawn.kaitobot.data.Idiom
 import cn.zeshawn.kaitobot.data.IdiomData
 import cn.zeshawn.kaitobot.data.Pinyin
-import cn.zeshawn.kaitobot.util.Save
 import cn.zeshawn.kaitobot.util.fuckDrawRect
 import java.awt.BasicStroke
 import java.awt.BasicStroke.CAP_BUTT
@@ -83,6 +82,9 @@ class HandleGame {
 
     val isOver
         get() = triedAnswer.size >= 6
+
+    val triedTimes
+        get() = triedAnswer.size
 
     val tips = lazy {
         val i = Random(Instant.now().epochSecond).nextInt(4)
@@ -176,16 +178,27 @@ class HandleGame {
         // 生成一组可选字
         val letters = mutableSetOf<String>()
         letters.addAll(answer.letters)
-        val parts = buildList {
-            for (ch in answer.letters) {
-                add(IdiomData.idioms.filter { ch in it.letters })
+        val parts = buildSet {
+            answer.letters.forEachIndexed { index, letter ->
+                IdiomData.idioms.filter { letter == it.letters[index] }.forEach { idiom ->
+                    addAll(idiom.letters)
+                }
             }
         }
-        while (letters.size < 20) {
-            parts.forEach {
-                letters.addAll(it.random(Random(Instant.now().epochSecond)).letters)
+
+        val res = letters.plus(parts).toMutableSet()
+        if (res.size < 25) {
+            letters.addAll(parts)
+            while (letters.size < 25) {
+                letters.add(IdiomData.idioms.random(Random(Instant.now().epochSecond)).letters.random())
             }
+        } else if (res.size > 25) {
+            res.removeAll(letters)
+            letters.addAll(res.shuffled().subList(0, 21))
+        } else {
+            letters.addAll(parts)
         }
+
         return letters.toList().shuffled()
     }
 
@@ -223,7 +236,7 @@ class HandleGame {
                 val maxWidth = width - padding
 
                 // 多行文字前面加点空格
-                val str = if (answer.derivation == "无") "啊没有典故捏。" else answer.derivation.run {
+                val str = if (answer.derivation == "") "啊没有典故捏。" else answer.derivation.run {
                     if (fg.stringWidth(this) > maxWidth) "   $this" else this
                 }
                 val lines = mutableListOf<String>()
@@ -247,7 +260,7 @@ class HandleGame {
                     g.drawString(
                         lines[i],
                         padding / 2,
-                        padding * 5 / 2 + (g.fontMetrics.height + g.fontMetrics.descent + g.fontMetrics.ascent) * i
+                        padding * 2 + 30 + (g.fontMetrics.height + g.fontMetrics.descent + g.fontMetrics.ascent) * i
                     )
                 }
                 g.dispose()
