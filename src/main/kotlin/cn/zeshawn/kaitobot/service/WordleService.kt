@@ -7,14 +7,14 @@ import cn.hutool.http.HttpUtil
 import cn.zeshawn.kaitobot.KaitoMind
 import cn.zeshawn.kaitobot.data.WordData
 import cn.zeshawn.kaitobot.data.WordleData
+import cn.zeshawn.kaitobot.util.imageResize
+import cn.zeshawn.kaitobot.util.toBufferedImage
+import cn.zeshawn.kaitobot.util.toMat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.MessageChain
-import org.bytedeco.javacv.Java2DFrameConverter
-import org.bytedeco.javacv.Java2DFrameUtils
-import org.bytedeco.javacv.OpenCVFrameConverter.ToMat
 import org.bytedeco.opencv.global.opencv_core.meanStdDev
 import org.bytedeco.opencv.global.opencv_imgproc.*
 import org.bytedeco.opencv.opencv_core.Mat
@@ -22,7 +22,6 @@ import org.bytedeco.opencv.opencv_core.MatVector
 import org.bytedeco.opencv.opencv_core.Size
 import org.jetbrains.kotlinx.dl.api.extension.argmax
 import java.awt.image.BufferedImage
-import java.awt.image.PixelGrabber
 import java.nio.DoubleBuffer
 import javax.imageio.ImageIO
 import kotlin.math.roundToInt
@@ -147,7 +146,7 @@ object WordleService {
     }
 
     private fun predict(cell: BufferedImage): String {
-        val features = imageToMatrix(cell)
+        val features = cell.imageResize(40)
         val tensor = OnnxTensor.createTensor(env, features)
         val inputs = mapOf<String, OnnxTensor>("input" to tensor)
         val result = session.run(inputs, setOf("output"))[0].value as Array<*>
@@ -158,42 +157,6 @@ object WordleService {
 
     private fun getLength(rows: MutableList<List<Pair<String, Int>>>): Int {
         return rows.size - 1
-    }
-
-
-    // to convert BufferedImage to float[][][][] as to fit shape(1,3,40,40)
-    private fun imageToMatrix(image: BufferedImage): Array<Array<Array<FloatArray>>> {
-        val width = image.width
-        val height = image.height
-        val pixels = IntArray(width * height)
-        val pg = PixelGrabber(image, 0, 0, width, height, pixels, 0, width)
-        try {
-            pg.grabPixels()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-        val ret = Array(1) {
-            Array(3) {
-                Array(pg.height) {
-                    FloatArray(pg.width)
-                }
-            }
-        }
-        var pixel: Int
-        var row = 0
-        var col = 0
-        while (row * width + col < pixels.size) {
-            pixel = row * width + col
-            ret[0][2][row][col] = (pixels[pixel] and 0x000000FF) / 255f // blue
-            ret[0][1][row][col] = (pixels[pixel] shr 8 and 0x000000FF) / 255f // green
-            ret[0][0][row][col] = (pixels[pixel] shr 16 and 0x000000FF) / 255f // red
-            col++
-            if (col == width - 1) {
-                col = 0
-                row++
-            }
-        }
-        return ret
     }
 
 
@@ -382,11 +345,3 @@ class WordleSolver {
 }
 
 
-fun BufferedImage.toMat(): Mat {
-    return ToMat().convertToMat(Java2DFrameConverter().convert(this)).clone()
-}
-
-
-fun Mat.toBufferedImage(): BufferedImage {
-    return Java2DFrameUtils.deepCopy(Java2DFrameConverter().getBufferedImage(ToMat().convert(this).clone()))
-}

@@ -29,7 +29,8 @@ object AdminCommand : ChatCommand {
             when (args[0]) {
                 "speak" -> {
                     val id = args[1].toLong()
-                    event.bot.getGroup(id)?.sendMessage(args[2])
+                    event.bot.getGroup(id)
+                        ?.sendMessage(event.message.contentToString().replace("/a speak ${args[1]} ", ""))
                 }
                 "achat" -> {
                     val id = args[1].toLong()

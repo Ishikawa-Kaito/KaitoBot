@@ -1,7 +1,6 @@
 package cn.zeshawn.kaitobot.listener
 
 import cn.hutool.core.date.LocalDateTimeUtil
-import cn.zeshawn.kaitobot.listener.base.EventHandler
 import cn.zeshawn.kaitobot.listener.base.IListener
 import kotlinx.coroutines.runBlocking
 import net.mamoe.mirai.event.events.GroupMessageEvent
@@ -19,7 +18,7 @@ object KaoyanListener : IListener {
     private var lastTalk = mutableMapOf(0L to 0L)
     private val kaoyanDate = LocalDate.parse("2022-12-24")
 
-    @EventHandler
+
     fun remindYou(event: GroupMessageEvent) {
         val id = event.sender.id
         if (id in remindList) {
